@@ -60,9 +60,10 @@ void CPU::loop()
 
 void CPU::execute()
 {
-	Byte I = (*M)[PC] >> 8;
-	Nibble A = ((*M)[PC] & 0x00F0) >> 4;
-	Nibble B = ((*M)[PC] & 0x000F);
+	Word base = (*M)[PC];
+	Byte I = base >> 8;
+	Nibble A = (base & 0x00F0) >> 4;
+	Nibble B = (base & 0x000F);
 	Word &X = fetchValue(A, PC + 1);
 	Word &Y = fetchValue(B, PC + 2);
 	std::cout << std::hex
