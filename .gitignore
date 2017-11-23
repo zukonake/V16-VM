@@ -1,7 +1,6 @@
 # Ignore generated folders
 bin
 depend
-doc
 build
 
 # Ignore generated files
