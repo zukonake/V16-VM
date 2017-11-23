@@ -148,7 +148,12 @@ unsigned CPU::getInstructionSize(Word instruction, Nibble A, Nibble B)
 		default: useA = true; useB = true; break;
 	}
 	if(useA) size += getModeSize(A);
-	if(useB) size += getModeSize(B);
+	if(useB)
+	{
+		unsigned Bsize = getModeSize(B);
+		if(size == 1 && Bsize == 1) size += 2;
+		else size += Bsize;
+	}
 	return size;
 }
 
