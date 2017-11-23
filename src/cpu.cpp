@@ -30,9 +30,9 @@ void CPU::start()
 	loop();
 }
 
-void CPU::connectHardware(Byte channel, HardwareInterface *hardware)
+void CPU::connectHardware(Byte channel, HardwareInterface &hardware)
 {
-	HW[channel] = hardware;
+	HW[channel] = &hardware;
 }
 
 void CPU::loop()

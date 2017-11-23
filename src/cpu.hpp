@@ -15,7 +15,7 @@ class CPU
 
 	void start();
 
-	void connectHardware(Byte channel, HardwareInterface *hardware);
+	void connectHardware(Byte channel, HardwareInterface &hardware);
 	private:
 	void loop();
 	void execute();
