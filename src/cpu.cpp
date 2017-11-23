@@ -110,7 +110,11 @@ void CPU::execute()
 			else F &= 0b0111;
 			Y *= X;
 			break;
-		case DIV: Y /= X; break;
+		case DIV:
+			if((Y % X) != 0) F |= 0b1000;
+			else F &= 0b0111;
+			Y /= X;
+			break;
 		case MOD: Y %= X; break;
 		default: throw std::runtime_error("illegal instruction");
 	}
