@@ -82,5 +82,6 @@ enum Instruction
 	SUB = 0x41,
 	MUL = 0x42,
 	DIV = 0x43,
+	MOD = 0x44,
 };
 

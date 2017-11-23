@@ -111,6 +111,7 @@ void CPU::execute()
 			Y *= X;
 			break;
 		case DIV: Y /= X; break;
+		case MOD: Y %= X; break;
 		default: throw std::runtime_error("illegal instruction");
 	}
 	if(I != JMP) PC += instructionSize;
