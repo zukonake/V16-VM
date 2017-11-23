@@ -72,70 +72,53 @@ void CPU::execute()
 	if(instructionSize >= 2) std::cout << "\tW1: " << (*M)[PC + 1] << "\n";
 	if(instructionSize >= 3) std::cout << "\tW2: " << (*M)[PC + 2] << "\n";
 	std::cout << "\n";
-	if(I >= 0x20 && I < 0x30 && (F & static_cast<Nibble>(Flags::C)) != 0)
+	switch(I)
 	{
-		conditionalTrigger();
-	}
-	else
-	{
-		if((F & static_cast<Nibble>(Flags::C)) != 0)
-		{
-			F &= 0b1101; //remove C flag
-		}
-		switch(I)
-		{
-			case NOP: break;
-			case JMP: PC = X; break;
-			case CLL:
-				S[++SP] = PC;
-				PC = X;
-				break;
-			case RET:
-				PC = S[SP--];
-				break;
-			case PNC: F |= static_cast<Nibble>(Flags::P); break;
-			//
-			case MOV: Y = X; break;
-			case CPY: Y = X; break;
-			case SWP:
-				{
-					Word buffer = Y;
-					Y = X;
-					X = buffer;
-				}
-				break;
-			//
-			case IEQ: if(X == Y) conditionalTrigger(); break;
-			case INQ: if(X != Y) conditionalTrigger(); break;
-			case IGT: if(X >  Y) conditionalTrigger(); break;
-			case ILT: if(X <  Y) conditionalTrigger(); break;
-			case IGQ: if(X >= Y) conditionalTrigger(); break;
-			case ILQ: if(X <= Y) conditionalTrigger(); break;
-			//
-			case NOT: X = !X; break;
-			case OR : Y |= X; break;
-			case AND: Y &= X; break;
-			case XOR: Y ^= X; break;
-			case RSF: Y >>= X; break;
-			case LSF: Y <<= X; break;
-			//
-			case ADD: Y += X; break; //TODO check overflow
-			case SUB: Y -= X; break; //TODO check overflow
-			case MUL: Y *= X; break; //TODO check overflow
-			case DIV: Y /= X; break; //TODO check overflow
-			default: throw std::runtime_error("illegal instruction");
-		}
+		case NOP: break;
+		case JMP: PC = X; break;
+		case CLL:
+			S[++SP] = PC;
+			PC = X;
+			break;
+		case RET:
+			PC = S[SP--];
+			break;
+		case PNC: F |= static_cast<Nibble>(Flags::P); break;
+		//
+		case MOV: Y = X; break;
+		case CPY: Y = X; break;
+		case SWP:
+			{
+				Word buffer = Y;
+				Y = X;
+				X = buffer;
+			}
+			break;
+		//
+		case IEQ: if(X == Y) ++PC; break;
+		case INQ: if(X != Y) ++PC; break;
+		case IGT: if(X >  Y) ++PC; break;
+		case ILT: if(X <  Y) ++PC; break;
+		case IGQ: if(X >= Y) ++PC; break;
+		case ILQ: if(X <= Y) ++PC; break;
+		//
+		case NOT: X = !X; break;
+		case OR : Y |= X; break;
+		case AND: Y &= X; break;
+		case XOR: Y ^= X; break;
+		case RSF: Y >>= X; break;
+		case LSF: Y <<= X; break;
+		//
+		case ADD: Y += X; break; //TODO check overflow
+		case SUB: Y -= X; break; //TODO check overflow
+		case MUL: Y *= X; break; //TODO check overflow
+		case DIV: Y /= X; break; //TODO check overflow
+		default: throw std::runtime_error("illegal instruction");
 	}
 	if(I != JMP)
 	{
 		PC += instructionSize;
 	}
-}
-
-void CPU::conditionalTrigger()
-{
-	++PC;
-	F |= static_cast<Nibble>(Flags::C);
 }
 
 unsigned CPU::getModeSize(Nibble mode)

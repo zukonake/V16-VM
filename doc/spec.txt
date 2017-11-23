@@ -7,10 +7,9 @@
 	* 1W program counter (PC)
 	* 8 bit stack pointer (SP)
 	* 4 bit flag (F) where
-		* OPC- where
+		* OP-- where
 			* O - overflow flag
 			* P - panic flag
-			* C - conditional flag
 		* F[O] refers to overflow flag etc.
 	* 256x 1W stack (S[0] .. S[FF])
 	* hardware modules
@@ -26,9 +25,6 @@
 			* X - X address
 			* Y - Y address
 		* if the A mode does not require an adress, Y address gets shifted to the X word
-	* if a conditional instruction is triggered it sets the F[C] to 1
-	* if a conditional is executed and F[C] == 1 it is triggered
-	* if F[C] == 1 and the current instruction is not a conditional F[C] = 0
 
 # A/B modes
 	* C - cycles to fetch

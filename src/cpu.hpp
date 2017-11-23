@@ -19,7 +19,6 @@ class CPU
 	private:
 	void loop();
 	void execute();
-	void conditionalTrigger();
 
 	static unsigned getModeSize(Nibble mode);
 	static unsigned getInstructionSize(Word instruction, Nibble A, Nibble B);
@@ -44,7 +43,6 @@ enum class Flags
 {
 	O = 0b1000,
 	P = 0b0100,
-	C = 0b0010,
 };
 
 enum class PortMode
