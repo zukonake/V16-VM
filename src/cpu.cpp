@@ -10,14 +10,8 @@ CPU::CPU(MemoryInterface &memory, std::string const &eepromPath) :
 	F(0x0),
 	SP(0x00)
 {
-	for(Word i = 0x00; i < 0x100; i++)
-	{
-		S[i] = 0x0000;
-	}
-	for(Word i = 0x0; i < 0x10; i++)
-	{
-		R[i] = 0x0000;
-	}
+	for(Word i = 0x00; i < 0x100; i++) S[i] = 0x0000;
+	for(Word i = 0x0; i < 0x10; i++) R[i] = 0x0000;
 	Word EEPROM[0x100];
 	std::ifstream file(eepromPath, std::ios::in | std::ios::binary);
 	if(file.is_open())
@@ -26,14 +20,8 @@ CPU::CPU(MemoryInterface &memory, std::string const &eepromPath) :
 		file.read(reinterpret_cast<char *>(EEPROM), 0x200);
 		file.close();
 	}
-	else
-	{
-		throw std::runtime_error("couldn't open eeprom file");
-	}
-	for(Word i = 0x0; i < 0x10; i++)
-	{
-		(*M)[i] = EEPROM[i];
-	}
+	else throw std::runtime_error("couldn't open eeprom file");
+	for(Word i = 0x0; i < 0x10; i++) (*M)[i] = EEPROM[i];
 }
 
 void CPU::start()
@@ -80,9 +68,7 @@ void CPU::execute()
 			S[++SP] = PC;
 			PC = X;
 			break;
-		case RET:
-			PC = S[SP--];
-			break;
+		case RET: PC = S[SP--]; break;
 		case PNC: F |= static_cast<Nibble>(Flags::P); break;
 		//
 		case MOV: Y = X; break;
@@ -115,10 +101,7 @@ void CPU::execute()
 		case DIV: Y /= X; break; //TODO check overflow
 		default: throw std::runtime_error("illegal instruction");
 	}
-	if(I != JMP)
-	{
-		PC += instructionSize;
-	}
+	if(I != JMP) PC += instructionSize;
 }
 
 unsigned CPU::getModeSize(Nibble mode)
@@ -161,10 +144,7 @@ Word &CPU::fetchValue(Nibble mode, Word address)
 {
 	bool indirect = (mode & 0b1000) >> 3;
 	mode = (mode & 0b0111);
-	if(indirect && mode > 04)
-	{
-		throw std::runtime_error("illegal mode");
-	}
+	if(indirect && mode > 04) throw std::runtime_error("illegal mode");
 	Word *output;
 	Word &value = (*M)[address];
 	switch(static_cast<PortMode>(mode))
