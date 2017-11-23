@@ -4,7 +4,7 @@
 int main()
 {
 	Memory<0x10000> memory;
-	CPU cpu(memory);
+	CPU cpu(memory, "eeprom.bin");
 	cpu.start();
 	return 0;
 }

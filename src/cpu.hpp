@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <ratio>
 //
 #include <architecture.hpp>
@@ -10,7 +11,7 @@
 class CPU
 {
 	public:
-	CPU(MemoryInterface &memory);
+	CPU(MemoryInterface &memory, std::string const &eepromPath);
 
 	void start();
 
@@ -20,7 +21,8 @@ class CPU
 	void execute();
 	void conditionalTrigger();
 
-	Word getInstructionSize(Word instruction, Nibble A, Nibble B);
+	static unsigned getModeSize(Nibble mode);
+	static unsigned getInstructionSize(Word instruction, Nibble A, Nibble B);
 	Word &fetchValue(Nibble mode, Word address);
 
 	bool running;

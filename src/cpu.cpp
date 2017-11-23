@@ -1,9 +1,10 @@
+#include <stdexcept>
 #include <fstream>
 #include <iostream>
 //
 #include "cpu.hpp"
 
-CPU::CPU(MemoryInterface &memory) :
+CPU::CPU(MemoryInterface &memory, std::string const &eepromPath) :
 	M(&memory),
 	PC(0x0000),
 	F(0x0),
@@ -18,7 +19,7 @@ CPU::CPU(MemoryInterface &memory) :
 		R[i] = 0x0000;
 	}
 	Word EEPROM[0x100];
-	std::ifstream file("eeprom.bin", std::ios::in | std::ios::binary);
+	std::ifstream file(eepromPath, std::ios::in | std::ios::binary);
 	if(file.is_open())
 	{
 		file.seekg(0, std::ios::beg);
@@ -27,7 +28,7 @@ CPU::CPU(MemoryInterface &memory) :
 	}
 	else
 	{
-		//TODO except
+		throw std::runtime_error("couldn't open eeprom file");
 	}
 	for(Word i = 0x0; i < 0x10; i++)
 	{
@@ -120,7 +121,7 @@ void CPU::execute()
 			case SUB: Y -= X; break; //TODO check overflow
 			case MUL: Y *= X; break; //TODO check overflow
 			case DIV: Y /= X; break; //TODO check overflow
-			default: break; //TODO except
+			default: throw std::runtime_error("illegal instruction");
 		}
 	}
 	if(I != JMP)
@@ -135,9 +136,23 @@ void CPU::conditionalTrigger()
 	F |= static_cast<Nibble>(Flags::C);
 }
 
-Word CPU::getInstructionSize(Word instruction, Nibble A, Nibble B)
+unsigned CPU::getModeSize(Nibble mode)
 {
-	Word size = 1;
+	unsigned size = 0;
+	switch(static_cast<PortMode>(mode & 0b0111))
+	{
+		case PortMode::M:
+		case PortMode::R:
+		case PortMode::H: size += 1; break;
+		//
+		default: break;
+	}
+	return size;
+}
+
+unsigned CPU::getInstructionSize(Word instruction, Nibble A, Nibble B)
+{
+	unsigned size = 1;
 	bool useA;
 	bool useB;
 	switch(instruction)
@@ -150,55 +165,10 @@ Word CPU::getInstructionSize(Word instruction, Nibble A, Nibble B)
 		case CLL:
 		case NOT: useA = true; useB = false; break;
 		//
-		case MOV:
-		case CPY:
-		case SWP:
-		case IEQ:
-		case INQ:
-		case IGT:
-		case ILT:
-		case IGQ:
-		case ILQ:
-		case OR :
-		case AND:
-		case XOR:
-		case RSF:
-		case LSF:
-		case ADD:
-		case SUB:
-		case MUL:
-		case DIV: useA = true; useB = true; break;
+		default: useA = true; useB = true; break;
 	}
-	if(useA)
-	{
-		switch(static_cast<PortMode>(A & 0b0111))
-		{
-			case PortMode::M:
-			case PortMode::R:
-			case PortMode::H: size += 1; break;
-			//
-			default:
-			case PortMode::P:
-			case PortMode::T:
-			case PortMode::S:
-			case PortMode::F: break;
-		}
-	}
-	if(useB)
-	{
-		switch(static_cast<PortMode>(B & 0b0111))
-		{
-			case PortMode::M:
-			case PortMode::R:
-			case PortMode::H: size += 1; break;
-			//
-			default:
-			case PortMode::P:
-			case PortMode::T:
-			case PortMode::S:
-			case PortMode::F: break;
-		}
-	}
+	if(useA) size += getModeSize(A);
+	if(useB) size += getModeSize(B);
 	return size;
 }
 
@@ -208,7 +178,7 @@ Word &CPU::fetchValue(Nibble mode, Word address)
 	mode = (mode & 0b0111);
 	if(indirect && mode > 04)
 	{
-		//TODO except?
+		throw std::runtime_error("illegal mode");
 	}
 	Word *output;
 	Word &value = (*M)[address];
@@ -221,7 +191,7 @@ Word &CPU::fetchValue(Nibble mode, Word address)
 		case PortMode::T: output = &S[SP]; break;
 		case PortMode::S: output = reinterpret_cast<Word *>(&SP); break;
 		case PortMode::F: output = reinterpret_cast<Word *>(&F); break;
-		default: break; //TODO except?
+		default: throw std::runtime_error("illegal mode");
 	}
 	if(indirect) return (*M)[*output];
 	else return *output;
