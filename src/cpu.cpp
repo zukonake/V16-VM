@@ -64,13 +64,14 @@ void CPU::execute()
 	Byte I = base >> 8;
 	Nibble A = (base & 0x00F0) >> 4;
 	Nibble B = (base & 0x000F);
+	unsigned instructionSize = getInstructionSize(I, A, B);
 	Word &X = fetchValue(A, PC + 1);
 	Word &Y = fetchValue(B, PC + 2);
-	std::cout << std::hex
-		<<   "PC: " << PC << "\n"
-		<< "\tW0: " << (*M)[PC] << "\n"
-		<< "\tW1: " << (*M)[PC + 1] << "\n"
-		<< "\tW2: " << (*M)[PC + 2] << "\n\n";
+	std::cout << std::hex << "PC: " << PC << "\n";
+	if(instructionSize >= 1) std::cout << "\tW0: " << (*M)[PC] << "\n";
+	if(instructionSize >= 2) std::cout << "\tW1: " << (*M)[PC + 1] << "\n";
+	if(instructionSize >= 3) std::cout << "\tW2: " << (*M)[PC + 2] << "\n";
+	std::cout << "\n";
 	if(I >= 0x20 && I < 0x30 && (F & static_cast<Nibble>(Flags::C)) != 0)
 	{
 		conditionalTrigger();
@@ -127,7 +128,7 @@ void CPU::execute()
 	}
 	if(I != JMP)
 	{
-		PC += getInstructionSize(I, A, B);
+		PC += instructionSize;
 	}
 }
 
