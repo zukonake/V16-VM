@@ -69,7 +69,7 @@ void CPU::execute()
 			PC = X;
 			break;
 		case RET: PC = S[SP--]; break;
-		case PNC: F |= static_cast<Nibble>(Flags::P); break;
+		case PNC: F |= 0b0100; break;
 		//
 		case MOV: Y = X; break;
 		case CPY: Y = X; break;
@@ -95,10 +95,22 @@ void CPU::execute()
 		case RSF: Y >>= X; break;
 		case LSF: Y <<= X; break;
 		//
-		case ADD: Y += X; break; //TODO check overflow
-		case SUB: Y -= X; break; //TODO check overflow
-		case MUL: Y *= X; break; //TODO check overflow
-		case DIV: Y /= X; break; //TODO check overflow
+		case ADD: Y += X; break;
+			if(X > 0x10000 - Y) F |= 0b1000;
+			else F &= 0b0111;
+			Y += X;
+			break;
+		case SUB:
+			if(X > Y) F |= 0b1000;
+			else F &= 0b0111;
+			Y -= X;
+			break;
+		case MUL: Y *= X; break;
+			if(X > 0x10000 / Y) F |= 0b1000;
+			else F &= 0b0111;
+			Y *= X;
+			break;
+		case DIV: Y /= X; break;
 		default: throw std::runtime_error("illegal instruction");
 	}
 	if(I != JMP) PC += instructionSize;

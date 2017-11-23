@@ -39,12 +39,6 @@ class CPU
 	Byte SP;
 };
 
-enum class Flags
-{
-	O = 0b1000,
-	P = 0b0100,
-};
-
 enum class PortMode
 {
 	M = 00,
