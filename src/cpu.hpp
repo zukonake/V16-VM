@@ -11,7 +11,7 @@
 class CPU
 {
 	public:
-	CPU(MemoryInterface &memory, std::string const &eepromPath);
+	CPU(MemoryInterface &memory, std::string const &romPath);
 
 	void start();
 

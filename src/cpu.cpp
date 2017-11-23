@@ -4,7 +4,7 @@
 //
 #include "cpu.hpp"
 
-CPU::CPU(MemoryInterface &memory, std::string const &eepromPath) :
+CPU::CPU(MemoryInterface &memory, std::string const &romPath) :
 	M(&memory),
 	PC(0x0000),
 	F(0x0),
@@ -12,16 +12,16 @@ CPU::CPU(MemoryInterface &memory, std::string const &eepromPath) :
 {
 	for(Word i = 0x00; i < 0x100; i++) S[i] = 0x0000;
 	for(Word i = 0x0; i < 0x10; i++) R[i] = 0x0000;
-	Word EEPROM[0x100];
-	std::ifstream file(eepromPath, std::ios::in | std::ios::binary);
+	Word ROM[0x100];
+	std::ifstream file(romPath, std::ios::in | std::ios::binary);
 	if(file.is_open())
 	{
 		file.seekg(0, std::ios::beg);
-		file.read(reinterpret_cast<char *>(EEPROM), 0x200);
+		file.read(reinterpret_cast<char *>(ROM), 0x200);
 		file.close();
 	}
-	else throw std::runtime_error("couldn't open eeprom file");
-	for(Word i = 0x0; i < 0x10; i++) (*M)[i] = EEPROM[i];
+	else throw std::runtime_error("couldn't open rom file");
+	for(Word i = 0x0; i < 0x10; i++) (*M)[i] = ROM[i];
 }
 
 void CPU::start()
