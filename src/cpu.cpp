@@ -65,12 +65,10 @@ void CPU::execute()
 	Word &X = fetchValue(A, PC + 1);
 	Word &Y = fetchValue(B, PC + 2);
 	std::cout << std::hex
-		<<  "PC: " << PC << "\n"
-		<< "\tI: " << static_cast<unsigned>(I) << "\n"
-		<< "\tA: " << static_cast<unsigned>(A) << "\n"
-		<< "\tB: " << static_cast<unsigned>(B) << "\n"
-		<< "\tX: " << X << "\n"
-		<< "\tY: " << Y << "\n\n";
+		<<   "PC: " << PC << "\n"
+		<< "\tW0: " << (*M)[PC] << "\n"
+		<< "\tW1: " << (*M)[PC + 1] << "\n"
+		<< "\tW2: " << (*M)[PC + 2] << "\n\n";
 	if(I >= 0x20 && I < 0x30 && (F & static_cast<Nibble>(Flags::C)) != 0)
 	{
 		conditionalTrigger();
