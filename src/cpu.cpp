@@ -127,7 +127,7 @@ void CPU::execute()
 	}
 	if(I != JMP)
 	{
-		++PC;
+		PC += getInstructionSize(I, A, B);
 	}
 }
 
@@ -135,6 +135,73 @@ void CPU::conditionalTrigger()
 {
 	++PC;
 	F |= static_cast<Nibble>(Flags::C);
+}
+
+Word CPU::getInstructionSize(Word instruction, Nibble A, Nibble B)
+{
+	Word size = 1;
+	bool useA;
+	bool useB;
+	switch(instruction)
+	{
+		case NOP:
+		case RET:
+		case PNC: useA = false; useB = false; break;
+		//
+		case JMP:
+		case CLL:
+		case NOT: useA = true; useB = false; break;
+		//
+		case MOV:
+		case CPY:
+		case SWP:
+		case IEQ:
+		case INQ:
+		case IGT:
+		case ILT:
+		case IGQ:
+		case ILQ:
+		case OR :
+		case AND:
+		case XOR:
+		case RSF:
+		case LSF:
+		case ADD:
+		case SUB:
+		case MUL:
+		case DIV: useA = true; useB = true; break;
+	}
+	if(useA)
+	{
+		switch(static_cast<PortMode>(A & 0b0111))
+		{
+			case PortMode::M:
+			case PortMode::R:
+			case PortMode::H: size += 1; break;
+			//
+			default:
+			case PortMode::P:
+			case PortMode::T:
+			case PortMode::S:
+			case PortMode::F: break;
+		}
+	}
+	if(useB)
+	{
+		switch(static_cast<PortMode>(B & 0b0111))
+		{
+			case PortMode::M:
+			case PortMode::R:
+			case PortMode::H: size += 1; break;
+			//
+			default:
+			case PortMode::P:
+			case PortMode::T:
+			case PortMode::S:
+			case PortMode::F: break;
+		}
+	}
+	return size;
 }
 
 Word &CPU::fetchValue(Nibble mode, Word address)
@@ -146,7 +213,7 @@ Word &CPU::fetchValue(Nibble mode, Word address)
 		//TODO except?
 	}
 	Word *output;
-	Word value = (*M)[address];
+	Word &value = (*M)[address];
 	switch(static_cast<PortMode>(mode))
 	{
 		case PortMode::M: output = &value; break;

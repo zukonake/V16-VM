@@ -20,11 +20,12 @@ class CPU
 	void execute();
 	void conditionalTrigger();
 
+	Word getInstructionSize(Word instruction, Nibble A, Nibble B);
 	Word &fetchValue(Nibble mode, Word address);
 
 	bool running;
 
-	utility::Clock<float, std::ratio<1, 100>> clock;
+	utility::Clock<float, std::ratio<1, 10>> clock;
 
 	MemoryInterface *M;
 	HardwareInterface *HW[0x100];
