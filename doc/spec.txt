@@ -7,7 +7,7 @@
 	* 1W program counter (PC)
 	* 8 bit stack pointer (SP)
 	* 4 bit flag (F) where
-		* OPC------------- where
+		* OPC- where
 			* O - overflow flag
 			* P - panic flag
 			* C - conditional flag
