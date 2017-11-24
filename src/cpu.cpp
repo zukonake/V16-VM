@@ -5,7 +5,8 @@
 CPU::CPU() :
 	PC(0x0000),
 	F(0x0),
-	SP(0x00)
+	SP(0x00),
+	cycle(1)
 {
 	for(unsigned i = 0x00; i < 0x100; i++) S[i] = 0x0000;
 	for(unsigned i = 0x0; i < 0x10; i++) R[i] = 0x0000;
@@ -50,7 +51,10 @@ void CPU::loop()
 	while(running)
 	{
 		clock.start();
-		execute();
+		if(--cycle == 0)
+		{
+			execute();
+		}
 		clock.stop();
 		clock.synchronize();
 	}
@@ -62,6 +66,7 @@ void CPU::execute()
 	Byte I = base >> 8;
 	Nibble A = (base & 0x00F0) >> 4;
 	Nibble B = (base & 0x000F);
+	cycle = getInstructionCycle(I, A, B);
 	unsigned instructionSize = getInstructionSize(I, A, B);
 	Word &X = fetchValue(A, PC + 1);
 	Word &Y = fetchValue(B, PC + 2);
@@ -131,6 +136,29 @@ void CPU::execute()
 	if(I != JMP) PC += instructionSize;
 }
 
+unsigned CPU::getModeCycle(Nibble mode)
+{
+	unsigned cycle = 0;
+	if(mode & 0b1000)
+	{
+		cycle += 2;
+	}
+	switch(static_cast<PortMode>(mode & 0b0111))
+	{
+		case PortMode::P:
+		case PortMode::S:
+		case PortMode::M: cycle += 1; break;
+		//
+		case PortMode::T:
+		case PortMode::H: cycle += 2; break;
+		//
+		case PortMode::F:
+		case PortMode::R:
+		default: break;
+	}
+	return cycle;
+}
+
 unsigned CPU::getModeSize(Nibble mode)
 {
 	unsigned size = 0;
@@ -143,6 +171,54 @@ unsigned CPU::getModeSize(Nibble mode)
 		default: break;
 	}
 	return size;
+}
+
+unsigned CPU::getInstructionCycle(Word instruction, Nibble A, Nibble B)
+{
+	unsigned size = getInstructionSize(instruction, A, B);
+	unsigned cycle = 0;
+	if(size >= 1)
+	{
+		switch(instruction)
+		{
+			case NOP:
+			case JMP:
+			case RET:
+			case PNC:
+			case MOV:
+			case NOT:
+			case OR :
+			case AND:
+			case XOR:
+			case RSF:
+			case LSF: cycle += 1; break;
+			//
+			case CLL:
+			case CPY:
+			case SWP:
+			case IEQ:
+			case INQ:
+			case IGT:
+			case ILT:
+			case IGQ:
+			case ILQ: cycle += 2; break;
+			//
+			case ADD:
+			case SUB: cycle += 3; break;
+			//
+			case MUL:
+			case DIV: cycle += 8; break;
+		}
+	}
+	if(size >= 2)
+	{
+		cycle += getModeCycle(A);
+	}
+	if(size >= 3)
+	{
+		cycle += getModeCycle(B);
+	}
+	return cycle;
 }
 
 unsigned CPU::getInstructionSize(Word instruction, Nibble A, Nibble B)

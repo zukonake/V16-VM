@@ -23,8 +23,12 @@ class CPU
 	void loop();
 	void execute();
 
+	static unsigned getModeCycle(Nibble mode);
+	static unsigned getInstructionCycle(Word instruction, Nibble A, Nibble B);
+
 	static unsigned getModeSize(Nibble mode);
 	static unsigned getInstructionSize(Word instruction, Nibble A, Nibble B);
+
 	Word &fetchValue(Nibble mode, Word address);
 
 	bool running;
@@ -41,6 +45,8 @@ class CPU
 
 	Word S[0x100];
 	Byte SP;
+
+	unsigned cycle;
 };
 
 enum class PortMode
