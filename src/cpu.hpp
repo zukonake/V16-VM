@@ -15,7 +15,7 @@ class CPU
 
 	void start();
 
-	void connectMemory(MemoryInterface &memory);
+	void connectMemory(Hardware &memory);
 	void connectRom(Hardware &rom);
 	void connectHardware(Byte channel, Hardware &hardware);
 
@@ -37,7 +37,7 @@ class CPU
 
 	utility::Clock<float, std::ratio<1, 10>> clock;
 
-	MemoryInterface *M;
+	Hardware *M;
 	Hardware *HW[0x100];
 	DummyHardware dummyHardware;
 

@@ -20,11 +20,11 @@ void CPU::start()
 	loop();
 }
 
-void CPU::connectMemory(MemoryInterface &memory)
+void CPU::connectMemory(Hardware &memory)
 {
-	M = &memory; //TODO M as reference to HW[0x00], HW takes Words as addresses
 	disconnectHardware(0x00);
-	connectHardware(0x00, dynamic_cast<Hardware &>(memory));
+	connectHardware(0x00, memory);
+	M = HW[0x00];
 }
 
 void CPU::connectRom(Hardware &rom)

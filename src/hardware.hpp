@@ -7,20 +7,15 @@ class Hardware
 	public:
 	virtual ~Hardware() = default;
 
-	virtual Word &operator[](Byte address) = 0;
-	virtual Word const &operator[](Byte address) const = 0;
+	virtual Word &operator[](Word address);
+	virtual Word const &operator[](Word address) const;
 
 	virtual void receive(Word word);
+	protected:
+	Word mutable dummy;
 };
 
-class DummyHardware : public Hardware
-{
-	public:
-	virtual Word &operator[](Byte address) override;
-	virtual Word const &operator[](Byte address) const override;
-	private:
-	Word mutable dummy;
-}; //TODO is dummy saving data?
+class DummyHardware : public Hardware {};
 
 class TestHardware : public DummyHardware
 {

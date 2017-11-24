@@ -12,11 +12,10 @@ class ROM : public Hardware
 	public:
 	ROM(std::string const &path);
 
-	virtual Word &operator[](Byte address) override;
-	virtual Word const &operator[](Byte address) const override;
+	virtual Word &operator[](Word address) override;
+	virtual Word const &operator[](Word address) const override;
 	private:
 	Word M[size];
-	Word dummy;
 };
 
 template<uint32_t size>
@@ -33,14 +32,14 @@ ROM<size>::ROM(std::string const &path)
 }
 
 template<uint32_t size>
-Word &ROM<size>::operator[](Byte address)
+Word &ROM<size>::operator[](Word address)
 {
-	dummy = M[address];
-	return dummy;
+	Hardware::dummy = M[address];
+	return Hardware::dummy;
 }
 
 template<uint32_t size>
-Word const &ROM<size>::operator[](Byte address) const
+Word const &ROM<size>::operator[](Word address) const
 {
 	return M[address];
 }
