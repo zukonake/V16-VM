@@ -93,5 +93,6 @@ enum Instruction
 	MUL = 0x42,
 	DIV = 0x43,
 	MOD = 0x44,
+	SND = 0x50,
 };
 

@@ -131,6 +131,7 @@ void CPU::execute()
 			Y /= X;
 			break;
 		case MOD: Y %= X; break;
+		case SND: HW[static_cast<Byte>(Y)]->receive(X); break;
 		default: throw std::runtime_error("illegal instruction");
 	}
 	if(I != JMP) PC += instructionSize;
@@ -201,7 +202,8 @@ unsigned CPU::getInstructionCycle(Word instruction, Nibble A, Nibble B)
 			case IGT:
 			case ILT:
 			case IGQ:
-			case ILQ: cycle += 2; break;
+			case ILQ:
+			case SND: cycle += 2; break;
 			//
 			case ADD:
 			case SUB: cycle += 3; break;
