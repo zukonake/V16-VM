@@ -16,7 +16,9 @@ class CPU
 	void start();
 
 	void connectMemory(MemoryInterface &memory);
+	void connectRom(Hardware &rom);
 	void connectHardware(Byte channel, Hardware &hardware);
+
 	void disconnectHardware(Byte channel);
 	private:
 	void copyRom();

@@ -10,7 +10,7 @@ int main()
 	TestHardware testHW;
 
 	CPU cpu;
-	cpu.connectHardware(0xFF, rom); //TODO new function?
+	cpu.connectRom(rom);
 	cpu.connectMemory(memory);
 	cpu.connectHardware(0x01, testHW);
 	cpu.start();

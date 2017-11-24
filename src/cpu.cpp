@@ -27,6 +27,12 @@ void CPU::connectMemory(MemoryInterface &memory)
 	connectHardware(0x00, dynamic_cast<Hardware &>(memory));
 }
 
+void CPU::connectRom(Hardware &rom)
+{
+	disconnectHardware(0xFF);
+	connectHardware(0xFF, rom);
+}
+
 void CPU::connectHardware(Byte channel, Hardware &hardware)
 {
 	HW[channel] = &hardware;
