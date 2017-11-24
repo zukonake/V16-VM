@@ -153,11 +153,12 @@ unsigned CPU::getModeCycle(Nibble mode)
 	switch(static_cast<PortMode>(mode & 0b0111))
 	{
 		case PortMode::P:
-		case PortMode::S:
-		case PortMode::M: cycle += 1; break;
-		//
 		case PortMode::T:
-		case PortMode::H: cycle += 2; break;
+		case PortMode::S: cycle += 1; break;
+		//
+		case PortMode::M: cycle += 2; break;
+		//
+		case PortMode::H: cycle += 4; break;
 		//
 		case PortMode::F:
 		case PortMode::R:
@@ -208,11 +209,12 @@ unsigned CPU::getInstructionCycle(Word instruction, Nibble A, Nibble B)
 			case IGT:
 			case ILT:
 			case IGQ:
-			case ILQ:
-			case SND: cycle += 2; break;
+			case ILQ: cycle += 2; break;
 			//
 			case ADD:
 			case SUB: cycle += 3; break;
+			//
+			case SND: cycle += 4; break;
 			//
 			case MUL:
 			case DIV: cycle += 8; break;
