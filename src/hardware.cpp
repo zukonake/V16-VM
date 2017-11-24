@@ -14,3 +14,7 @@ Word const &DummyHardware::operator[](Byte address) const
 	return dummy;
 }
 
+void DummyHardware::receive(Word word)
+{
+	(void) word;
+}
