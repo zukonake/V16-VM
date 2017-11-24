@@ -5,6 +5,7 @@ See the general specifications for instructions list.
   * `ZZZ $A:XXXX $B:YYYY` where
     * `ZZZ` - base instruction (for example `ADD`)
     * `$` - if placed, means the mode is indirect
+      * indirect means that instead of taking val, it takes M[val]
     * `AB` - modes (for example `R`)
     * `XY` - addresses (for example `0FA3`)
   * examples
