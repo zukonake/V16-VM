@@ -11,13 +11,15 @@
 class CPU
 {
 	public:
-	CPU(MemoryInterface &memory, std::string const &romPath);
+	CPU();
 
 	void start();
 
-	void connectHardware(Byte channel, HardwareInterface &hardware);
+	void connectMemory(MemoryInterface &memory);
+	void connectHardware(Byte channel, Hardware &hardware);
 	void disconnectHardware(Byte channel);
 	private:
+	void copyRom();
 	void loop();
 	void execute();
 
@@ -30,7 +32,7 @@ class CPU
 	utility::Clock<float, std::ratio<1, 10>> clock;
 
 	MemoryInterface *M;
-	HardwareInterface *HW[0x100];
+	Hardware *HW[0x100];
 	DummyHardware dummyHardware;
 
 	Word R[0xF];

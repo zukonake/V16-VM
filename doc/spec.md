@@ -158,3 +158,6 @@
 		* CCAA where
 			* C - channel (hardware id)
 			* A - databus address
+		* ROM shall be connected as HW[0xFF]
+			* whole ROM is copied to memory when the CPU starts
+		* Memory shall be connected as HW[0x00]

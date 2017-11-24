@@ -13,7 +13,7 @@ class MemoryInterface
 };
 
 template<uint32_t size>
-class Memory : public MemoryInterface, private HardwareInterface
+class Memory : public MemoryInterface, public Hardware
 {
 	public:
 	virtual Word &operator[](Word address) override;
@@ -21,8 +21,6 @@ class Memory : public MemoryInterface, private HardwareInterface
 
 	virtual Word &operator[](Byte address) override;
 	virtual Word const &operator[](Byte address) const override;
-
-	virtual void receive(Word word) override;
 	private:
 	Word M[size];
 };
@@ -49,9 +47,4 @@ template<uint32_t size>
 Word const &Memory<size>::operator[](Byte address) const
 {
 	return M[address];
-}
-template<uint32_t size>
-void Memory<size>::receive(Word word)
-{
-	(void) word;
 }

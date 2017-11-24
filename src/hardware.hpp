@@ -2,24 +2,22 @@
 
 #include <architecture.hpp>
 
-class HardwareInterface
+class Hardware
 {
 	public:
-	virtual ~HardwareInterface() = default;
+	virtual ~Hardware() = default;
 
 	virtual Word &operator[](Byte address) = 0;
 	virtual Word const &operator[](Byte address) const = 0;
 
-	virtual void receive(Word word) = 0;
+	virtual void receive(Word word);
 };
 
-class DummyHardware : public HardwareInterface
+class DummyHardware : public Hardware
 {
 	public:
 	virtual Word &operator[](Byte address) override;
 	virtual Word const &operator[](Byte address) const override;
-
-	virtual void receive(Word word) override;
 	private:
 	Word mutable dummy;
-};
+}; //TODO is dummy saving data?

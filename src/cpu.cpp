@@ -1,37 +1,32 @@
-#include <stdexcept>
-#include <fstream>
 #include <iostream>
 //
 #include "cpu.hpp"
 
-CPU::CPU(MemoryInterface &memory, std::string const &romPath) :
-	M(&memory),
+CPU::CPU() :
 	PC(0x0000),
 	F(0x0),
 	SP(0x00)
 {
 	for(unsigned i = 0x00; i < 0x100; i++) S[i] = 0x0000;
 	for(unsigned i = 0x0; i < 0x10; i++) R[i] = 0x0000;
-	Word ROM[0x100];
-	std::ifstream file(romPath, std::ios::in | std::ios::binary);
-	if(file.is_open())
-	{
-		file.seekg(0, std::ios::beg);
-		file.read(reinterpret_cast<char *>(ROM), 0x200);
-		file.close();
-	}
-	else throw std::runtime_error("couldn't open rom file");
-	for(Word i = 0x00; i < 0x100; i++) (*M)[i] = ROM[i];
 	for(Word i = 0x00; i < 0x100; i++) connectHardware(static_cast<Byte>(i), dummyHardware);
 }
 
 void CPU::start()
 {
+	copyRom();
 	running = true;
 	loop();
 }
 
-void CPU::connectHardware(Byte channel, HardwareInterface &hardware)
+void CPU::connectMemory(MemoryInterface &memory)
+{
+	M = &memory; //TODO M as reference to HW[0x00], HW takes Words as addresses
+	disconnectHardware(0x00);
+	connectHardware(0x00, dynamic_cast<Hardware &>(memory));
+}
+
+void CPU::connectHardware(Byte channel, Hardware &hardware)
 {
 	HW[channel] = &hardware;
 }
@@ -39,6 +34,15 @@ void CPU::connectHardware(Byte channel, HardwareInterface &hardware)
 void CPU::disconnectHardware(Byte channel)
 {
 	HW[channel] = &dummyHardware;
+}
+
+void CPU::copyRom()
+{
+	for(Word i = 0x00; i < 0x100; i++)
+	{
+		Word const &word = (*HW[0xFF])[static_cast<Byte>(i)];
+		(*M)[i] = word;
+	}
 }
 
 void CPU::loop()

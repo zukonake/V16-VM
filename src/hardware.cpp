@@ -1,5 +1,10 @@
 #include "hardware.hpp"
 
+void Hardware::receive(Word word)
+{
+	(void) word;
+}
+
 Word &DummyHardware::operator[](Byte address)
 {
 	(void) address;
@@ -12,9 +17,4 @@ Word const &DummyHardware::operator[](Byte address) const
 	(void) address;
 	dummy = 0x0000;
 	return dummy;
-}
-
-void DummyHardware::receive(Word word)
-{
-	(void) word;
 }
