@@ -1,36 +1,36 @@
 # V16 v1.1.0 CPU by zukonake
 
-# General
-	* 16 bit word - W
-	* 1W memory addresses (128KiB max)
-	* 16x 1W registers (R[0] .. R[F])
-	* 1W program counter (PC)
-	* 8 bit stack pointer (SP)
-	* 4 bit flag (F) where
-		* OP-- where
-			* O - overflow flag
-			* P - panic flag
-		* F[O] refers to overflow flag etc.
-	* 256x 1W stack (S[0] .. S[FF])
-	* hardware modules
-	* big endian
+## General
+  * 16 bit word - W
+  * 1W memory addresses (128KiB max)
+  * 16x 1W registers (`R[0]` .. `R[F]`)
+  * 1W program counter (`PC`)
+  * 8 bit stack pointer (`SP`)
+  * 4 bit flag (`F`) where
+    * `OP--` where
+      * `O` - overflow flag
+      * `P` - panic flag
+    * `F[O]` refers to overflow flag etc.
+  * 256x 1W stack (`S[0]` .. `S[FF]`)
+  * hardware modules
+  * big endian
 
-# Instructions
-	* instructions of 1W - 3W
-	* instruction is composed of (nibbles)
-		* IIAB|XXXX|YYYY where
-			* I - instruction code
-			* A - X mode
-			* B - Y mode
-			* X - X address
-			* Y - Y address
-		* if the A mode does not require an adress, Y address gets shifted to the X word
+## Instructions
+  * instructions of 1W - 3W
+  * instruction is composed of (nibbles)
+    * `IIABXXXXYYYY` where
+      * `I` - instruction code
+      * `A` - X mode
+      * `B` - Y mode
+      * `X` - X address
+      * `Y` - Y address
+    * if the A mode does not require an adress, Y address gets shifted to the X word
 
-# A/B modes
-	* C - cycles to fetch
-	* V - value
-	* N - nibbles needed
-	* I - indirect? takes 2 more cycles
+## A/B modes
+  * `C` - cycles to fetch
+  * `V` - value
+  * `N` - nibbles needed
+  * `I` - indirect? takes 2 more cycles
 ```
 +---+----+---+------+-------------+
 | C | V  | N | NAME | DESCRIPTION |
@@ -53,7 +53,7 @@
 +---+----+---+------+-------------+
 ```
 
-# Instructions
+## Instructions
 ```
 +---+------+----+----------+----------+
 | C | V    | AB?| NAME     | BEHAVIOR |
@@ -153,11 +153,11 @@
 +---+------+----+----------+----------+
 ```
 
-# Hardware Modules
-	* Hardware address is composed of (nibbles)
-		* CCAA where
-			* C - channel (hardware id)
-			* A - databus address
-		* ROM shall be connected as HW[0xFF]
-			* whole ROM is copied to memory when the CPU starts
-		* Memory shall be connected as HW[0x00]
+## Hardware Modules
+  * Hardware address is composed of (nibbles)
+    * `CCAA` where
+      * `C` - channel (hardware id)
+      * `A` - databus address
+    * ROM shall be connected as `HW[0xFF]`
+      * whole ROM is copied to memory when the CPU starts
+    * Memory shall be connected as `HW[0x00]`
