@@ -9,7 +9,7 @@ OBJ_FILES := $(subst $(SRC_DIR)/,,$(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o))
 DEP_FILES := $(OBJ_FILES:.o=.d)
 
 CXX := clang++
-INCLUDE_FLAGS := -I $(SRC_DIR)
+INCLUDE_FLAGS := -I $(SRC_DIR) -I include
 WARNING_FLAGS := \
 	-Wall \
 	-Wextra \
@@ -30,7 +30,7 @@ WARNING_FLAGS := \
 	-Weffc++ \
 	-Wconversion
 
-LDLIBS := -pthread
+LDLIBS := -L lib -static -lv16
 DEBUG_FLAGS := -ferror-limit=5 -g -O0 -ftrapv
 FLAGS := $(INCLUDE_FLAGS) $(WARNING_FLAGS) -MMD -MP -std=c++14 -pedantic $(DEBUG_FLAGS)
 
