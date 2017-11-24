@@ -12,7 +12,6 @@ vgcore*
 # Ignore binary files
 *.so
 *.dll
-*.a
 *.o
 *.exe
 *.out
