@@ -21,3 +21,9 @@ class DummyHardware : public Hardware
 	private:
 	Word mutable dummy;
 }; //TODO is dummy saving data?
+
+class TestHardware : public DummyHardware
+{
+	public:
+	virtual void receive(Word word) override;
+};
