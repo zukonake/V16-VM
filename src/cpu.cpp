@@ -94,7 +94,7 @@ void CPU::execute()
 		case IGQ: if(X >= Y) ++PC; break;
 		case ILQ: if(X <= Y) ++PC; break;
 		//
-		case NOT: X = !X; break;
+		case NOT: Y = !X; break;
 		case OR : Y |= X; break;
 		case AND: Y &= X; break;
 		case XOR: Y ^= X; break;
@@ -153,8 +153,7 @@ unsigned CPU::getInstructionSize(Word instruction, Nibble A, Nibble B)
 		case PNC: useA = false; useB = false; break;
 		//
 		case JMP:
-		case CLL:
-		case NOT: useA = true; useB = false; break;
+		case CLL: useA = true; useB = false; break;
 		//
 		default: useA = true; useB = true; break;
 	}
