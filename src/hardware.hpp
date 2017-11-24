@@ -33,3 +33,11 @@ Word const &Hardware<size>::operator[](Byte address) const
 	return M[address];
 }
 
+class DummyHardware : public HardwareInterface
+{
+	public:
+	virtual Word &operator[](Byte address) override;
+	virtual Word const &operator[](Byte address) const override;
+	private:
+	Word mutable dummy;
+};

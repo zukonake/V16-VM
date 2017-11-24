@@ -10,8 +10,8 @@ CPU::CPU(MemoryInterface &memory, std::string const &romPath) :
 	F(0x0),
 	SP(0x00)
 {
-	for(Word i = 0x00; i < 0x100; i++) S[i] = 0x0000;
-	for(Word i = 0x0; i < 0x10; i++) R[i] = 0x0000;
+	for(unsigned i = 0x00; i < 0x100; i++) S[i] = 0x0000;
+	for(unsigned i = 0x0; i < 0x10; i++) R[i] = 0x0000;
 	Word ROM[0x100];
 	std::ifstream file(romPath, std::ios::in | std::ios::binary);
 	if(file.is_open())
@@ -21,7 +21,8 @@ CPU::CPU(MemoryInterface &memory, std::string const &romPath) :
 		file.close();
 	}
 	else throw std::runtime_error("couldn't open rom file");
-	for(Word i = 0x0; i < 0x10; i++) (*M)[i] = ROM[i];
+	for(Word i = 0x00; i < 0x100; i++) (*M)[i] = ROM[i];
+	for(Word i = 0x00; i < 0x100; i++) connectHardware(static_cast<Byte>(i), dummyHardware);
 }
 
 void CPU::start()
@@ -33,6 +34,11 @@ void CPU::start()
 void CPU::connectHardware(Byte channel, HardwareInterface &hardware)
 {
 	HW[channel] = &hardware;
+}
+
+void CPU::disconnectHardware(Byte channel)
+{
+	HW[channel] = &dummyHardware;
 }
 
 void CPU::loop()

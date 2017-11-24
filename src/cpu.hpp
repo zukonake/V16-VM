@@ -16,6 +16,7 @@ class CPU
 	void start();
 
 	void connectHardware(Byte channel, HardwareInterface &hardware);
+	void disconnectHardware(Byte channel);
 	private:
 	void loop();
 	void execute();
@@ -30,6 +31,7 @@ class CPU
 
 	MemoryInterface *M;
 	HardwareInterface *HW[0x100];
+	DummyHardware dummyHardware;
 
 	Word R[0xF];
 	Word PC;
