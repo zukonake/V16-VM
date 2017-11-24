@@ -30,7 +30,7 @@
 	* C - cycles to fetch
 	* V - value
 	* N - nibbles needed
-	* I - indirect?
+	* I - indirect? takes 2 more cycles
 ```
 +---+----+-------+------+-------------+
 | C | V  | N     | NAME | DESCRIPTION |
