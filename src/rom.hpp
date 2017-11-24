@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <fstream>
+#include <string>
 //
 #include <architecture.hpp>
 #include <hardware.hpp>
@@ -34,6 +35,10 @@ ROM<size>::ROM(std::string const &path)
 template<uint32_t size>
 Word &ROM<size>::operator[](Word address)
 {
+	if(address >= size)
+	{
+		throw std::out_of_range("rom address: " + std::to_string(address) + " is out of range");
+	}
 	Hardware::dummy = M[address];
 	return Hardware::dummy;
 }
@@ -41,6 +46,10 @@ Word &ROM<size>::operator[](Word address)
 template<uint32_t size>
 Word const &ROM<size>::operator[](Word address) const
 {
+	if(address >= size)
+	{
+		throw std::out_of_range("rom address: " + std::to_string(address) + " is out of range");
+	}
 	return M[address];
 }
 
