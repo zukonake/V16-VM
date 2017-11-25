@@ -146,13 +146,13 @@ Word &CPU::fetchValue(Mode mode, Word address)
 	Word &value = (*M)[address];
 	switch(mode.type)
 	{
-		case ModeType::M: output = &value; break;
-		case ModeType::R: output = &R[value & 0x000F]; break;
-		case ModeType::H: output = &(*HW)[(value & 0xFF00) >> 8][value & 0x00FF]; break;
-		case ModeType::P: output = &PC; break;
-		case ModeType::T: output = &S[SP]; break;
-		case ModeType::S: output = reinterpret_cast<Word *>(&SP); break;
-		case ModeType::F: output = reinterpret_cast<Word *>(&F); break;
+		case Mode::Type::M: output = &value; break;
+		case Mode::Type::R: output = &R[value & 0x000F]; break;
+		case Mode::Type::H: output = &(*HW)[(value & 0xFF00) >> 8][value & 0x00FF]; break;
+		case Mode::Type::P: output = &PC; break;
+		case Mode::Type::T: output = &S[SP]; break;
+		case Mode::Type::S: output = reinterpret_cast<Word *>(&SP); break;
+		case Mode::Type::F: output = reinterpret_cast<Word *>(&F); break;
 		default: throw std::runtime_error("illegal mode");
 	}
 	if(mode.indirect) return (*M)[*output];
