@@ -8,7 +8,7 @@
 class HostConsole : public Hardware
 {
 	public:
-	enum class Command
+	enum Command
 	{
 		NOP = 0x00,
 		APD = 0x01,

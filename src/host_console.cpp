@@ -7,9 +7,9 @@ void HostConsole::handleAdpI(Word value)
 	Command command = static_cast<Command>((value & 0xFF00) >> 8);
 	switch(command)
 	{
-		case Command::NOP: break;
-		case Command::APD: buffer += static_cast<char>(value & 0x00FF); break;
-		case Command::WRT: std::cout << buffer; break;
-		case Command::CLR: buffer = ""; break;
+		case NOP: break;
+		case APD: buffer += static_cast<char>(value & 0x00FF); break;
+		case WRT: std::cout << buffer; break;
+		case CLR: buffer = ""; break;
 	}
 }
