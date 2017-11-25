@@ -32,7 +32,7 @@ ROM<size>::ROM(std::string const &path)
 	file.read(reinterpret_cast<char *>(bytes), 0x200);
 	for(unsigned i = 0; i < size; i++)
 	{
-		M[i] = (static_cast<Word>(bytes[(i * 2)] << 8)) | bytes[(i * 2) + 1];
+		M[i] = bytes[(i * 2)] | static_cast<Word>(bytes[(i * 2) + 1] << 8);
 	}
 	file.close();
 }
