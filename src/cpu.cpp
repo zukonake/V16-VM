@@ -74,14 +74,14 @@ void CPU::execute()
 	Word &X = fetchValue(instr.A, PC + 1);
 	Word &Y = fetchValue(instr.B, PC + 2);
 	std::cout << std::hex << "PC: " << PC << "\n";
-	if(instructionSize >= 1) std::cout << "\tW0: " << (*M)[PC] << "\n";
-	if(instructionSize >= 2) std::cout << "\tW1: " << (*M)[PC + 1] << "\n";
-	if(instructionSize >= 3) std::cout << "\tW2: " << (*M)[PC + 2] << "\n";
+	if(instructionSize >= 1) std::cout << "\tB: " << (*M)[PC] << "\n";
+	if(instructionSize >= 2) std::cout << "\tX: " << X << "\n";
+	if(instructionSize >= 3) std::cout << "\tY: " << Y << "\n";
 	std::cout << "\n";
 	switch(instr.opcode)
 	{
 		case NOP: break;
-		case JMP: PC = X; break;
+		case JMP: PC = X; break; //actually this could be CPY instead
 		case CLL:
 			S[++SP] = PC;
 			PC = X;

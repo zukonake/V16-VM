@@ -23,13 +23,17 @@ template<uint32_t size>
 ROM<size>::ROM(std::string const &path)
 {
 	std::ifstream file(path, std::ios::in | std::ios::binary);
-	if(file.is_open())
+	if(!file.good())
 	{
-		file.seekg(0, std::ios::beg);
-		file.read(reinterpret_cast<char *>(M), 0x200);
-		file.close();
+		throw std::runtime_error("couldn't open rom file");
 	}
-	else throw std::runtime_error("couldn't open rom file");
+	uint8_t *bytes = new uint8_t[size * 2];
+	file.read(reinterpret_cast<char *>(bytes), 0x200);
+	for(unsigned i = 0; i < size; i++)
+	{
+		M[i] = (static_cast<Word>(bytes[(i * 2)] << 8)) | bytes[(i * 2) + 1];
+	}
+	file.close();
 }
 
 template<uint32_t size>

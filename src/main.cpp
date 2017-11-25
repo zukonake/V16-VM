@@ -6,7 +6,7 @@
 int main()
 {
 	Memory<0x10000> memory;
-	ROM<0x100> rom("rom.bin");
+	ROM<0x100> rom("test.bin");
 	TestHardware testHW;
 
 	CPU cpu;
