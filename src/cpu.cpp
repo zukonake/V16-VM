@@ -147,8 +147,8 @@ Word &CPU::fetchValue(Mode mode, Word address)
 	switch(mode.type)
 	{
 		case ModeType::M: output = &value; break;
-		case ModeType::R: output = &R[value & 0x00FF]; break;
-		case ModeType::H: output = &(*HW)[value & 0xFF00][value & 0x00FF]; break;
+		case ModeType::R: output = &R[value & 0x000F]; break;
+		case ModeType::H: output = &(*HW)[(value & 0xFF00) >> 8][value & 0x00FF]; break;
 		case ModeType::P: output = &PC; break;
 		case ModeType::T: output = &S[SP]; break;
 		case ModeType::S: output = reinterpret_cast<Word *>(&SP); break;
