@@ -13,10 +13,11 @@ class ROM : public Hardware
 	public:
 	ROM(std::string const &path);
 
-	virtual Word &operator[](Word address) override;
-	virtual Word const &operator[](Word address) const override;
+	virtual Word &handleSdp(Word value) override;
+
 	private:
 	Word M[size];
+	Word dummy;
 };
 
 template<uint32_t size>
@@ -37,23 +38,12 @@ ROM<size>::ROM(std::string const &path)
 }
 
 template<uint32_t size>
-Word &ROM<size>::operator[](Word address)
+Word &ROM<size>::handleSdp(Word value)
 {
-	if(address >= size)
+	if(value >= size)
 	{
-		throw std::out_of_range("rom address: " + std::to_string(address) + " is out of range");
+		throw std::out_of_range("rom address: " + std::to_string(value) + " is out of range");
 	}
-	Hardware::dummy = M[address];
-	return Hardware::dummy;
+	dummy = M[value];
+	return dummy;
 }
-
-template<uint32_t size>
-Word const &ROM<size>::operator[](Word address) const
-{
-	if(address >= size)
-	{
-		throw std::out_of_range("rom address: " + std::to_string(address) + " is out of range");
-	}
-	return M[address];
-}
-

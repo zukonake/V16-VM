@@ -1,24 +1,20 @@
 #pragma once
 
 #include <v16/architecture.hpp>
+#include <sdp_device.hpp>
+#include <adp_device.hpp>
 
-class Hardware
+class Hardware : public SdpDevice, public AdpDevice
 {
 	public:
 	virtual ~Hardware() = default;
 
-	virtual Word &operator[](Word address);
-	virtual Word const &operator[](Word address) const;
-
-	virtual void receive(Word word);
 	protected:
+	virtual Word &handleSdp(Word value) override;
+	virtual void handleAdpI(Word value) override;
+
+	private:
 	Word mutable dummy;
 };
 
-class DummyHardware : public Hardware {};
-
-class TestHardware : public DummyHardware
-{
-	public:
-	virtual void receive(Word word) override;
-};
+class DummyHardware : public Hardware { };

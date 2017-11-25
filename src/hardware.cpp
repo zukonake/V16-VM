@@ -1,26 +1,16 @@
 #include <iostream>
 #include "hardware.hpp"
 
-void Hardware::receive(Word word)
+Word &Hardware::handleSdp(Word value)
 {
-	(void) word;
-}
-
-Word &Hardware::operator[](Word address)
-{
-	(void) address;
+	(void) value;
 	dummy = 0x0000;
 	return dummy;
 }
 
-Word const &Hardware::operator[](Word address) const
+void Hardware::handleAdpI(Word value)
 {
-	(void) address;
-	dummy = 0x0000;
-	return dummy;
+	(void) value;
+	AdpDevice::output.set_value(0x0000);
 }
 
-void TestHardware::receive(Word word)
-{
-	std::cout << "TestHardware: received word: " << std::hex << word << "\n";
-}

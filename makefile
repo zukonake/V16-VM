@@ -30,7 +30,7 @@ WARNING_FLAGS := \
 	-Weffc++ \
 	-Wconversion
 
-LDLIBS := -L lib -static -lv16
+LDLIBS := -lpthread -L lib -l:libv16.a
 DEBUG_FLAGS := -ferror-limit=5 -g -O0 -ftrapv
 FLAGS := $(INCLUDE_FLAGS) $(WARNING_FLAGS) -MMD -MP -std=c++14 -pedantic $(DEBUG_FLAGS)
 
