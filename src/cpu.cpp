@@ -151,7 +151,7 @@ Word &CPU::fetchValue(Mode mode, Word address)
 	{
 		case Mode::Type::M: output = &value; break;
 		case Mode::Type::R: output = &R[value & 0x000F]; break;
-		case Mode::Type::H: output = &(*HW)[(value & 0xFF00) >> 8][value & 0x00FF]; break;
+		case Mode::Type::H: output = &(*HW[(value & 0xFF00) >> 8])[value & 0x00FF]; break;
 		case Mode::Type::P: output = &PC; break;
 		case Mode::Type::S: output = &dummy; dummy = PC - value; break;
 		case Mode::Type::A: output = &dummy; dummy = PC + value; break;
