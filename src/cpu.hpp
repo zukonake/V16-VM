@@ -36,7 +36,7 @@ class CPU
 	Hardware *HW[0x100];
 	DummyHardware dummyHardware;
 
-	Word R[0xF];
+	Word R[0x10];
 	Word PC;
 	Nibble F;
 
