@@ -43,5 +43,6 @@ class CPU
 	Word S[0x100];
 	Byte SP;
 
+	Word mutable dummy;
 	unsigned cycle;
 };
