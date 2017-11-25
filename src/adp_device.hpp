@@ -12,7 +12,7 @@ class AdpDevice
 	virtual ~AdpDevice();
 
 	void adpI(Word value);
-	std::future<Word> adpO();
+	Word adpO();
 	protected:
 	virtual void handleAdpI(Word value) = 0;
 

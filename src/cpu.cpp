@@ -134,7 +134,9 @@ void CPU::execute()
 			Y /= X;
 			break;
 		case MOD: Y %= X; break;
-		case SND: HW[static_cast<Byte>(Y)]->adpI(X); break;
+		//
+		case API: HW[static_cast<Byte>(Y)]->adpI(X); break;
+		case APO: Y = HW[static_cast<Byte>(X)]->adpO(); break;
 		default: throw std::runtime_error("illegal instruction");
 	}
 	if(instr.opcode != JMP) PC += instructionSize;

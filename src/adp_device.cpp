@@ -11,8 +11,8 @@ void AdpDevice::adpI(Word value)
 	thread = std::thread(&AdpDevice::handleAdpI, this, value);
 }
 
-std::future<Word> AdpDevice::adpO()
+Word AdpDevice::adpO()
 {
 	if(thread.joinable()) thread.join();
-	return output.get_future();
+	return output.get_future().get();
 }
