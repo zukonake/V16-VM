@@ -74,7 +74,7 @@ void CPU::execute()
 	Word &X = fetchValue(instr.A, PC + 1);
 	Word &Y = fetchValue(instr.B, PC + 2);
 	std::cout << std::hex << "PC: " << PC << "\n";
-	if(instructionSize >= 1) std::cout << "\tB: " << (*M)[PC] << "\n";
+	if(instructionSize >= 1) std::cout << "\tI: " << (*M)[PC] << "\n";
 	if(instructionSize >= 2) std::cout << "\tX: " << X << "\n";
 	if(instructionSize >= 3) std::cout << "\tY: " << Y << "\n";
 	std::cout << "\n";
