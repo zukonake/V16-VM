@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	ROM<0x100> rom(romPath);
 	HostConsole console;
 
-	CPU cpu;
+	CPU cpu(false);
 	cpu.connectRom(rom);
 	cpu.connectMemory(memory);
 	cpu.connectHardware(0x01, console);

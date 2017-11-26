@@ -2,11 +2,12 @@
 //
 #include "cpu.hpp"
 
-CPU::CPU() :
+CPU::CPU(bool log) :
 	PC(0x0000),
 	F(0x0),
 	SP(0x00),
-	cycle(1)
+	cycle(1),
+	log(log)
 {
 	for(unsigned i = 0x00; i < 0x100; i++) S[i] = 0x0000;
 	for(unsigned i = 0x0; i < 0x10; i++) R[i] = 0x0000;
@@ -73,11 +74,14 @@ void CPU::execute()
 	unsigned instructionSize = instr.getSize();
 	Word &X = fetchValue(instr.A, PC + 1);
 	Word &Y = fetchValue(instr.B, PC + 2);
-	std::cout << std::hex << "PC: " << PC << "\n";
-	if(instructionSize >= 1) std::cout << "\tI: " << (*M)[PC] << "\n";
-	if(instructionSize >= 2) std::cout << "\tX: " << X << "\n";
-	if(instructionSize >= 3) std::cout << "\tY: " << Y << "\n";
-	std::cout << "\n";
+	if(log)
+	{
+		std::cout << std::hex << "PC: " << PC << "\n";
+		if(instructionSize >= 1) std::cout << "\tI: " << (*M)[PC] << "\n";
+		if(instructionSize >= 2) std::cout << "\tX: " << X << "\n";
+		if(instructionSize >= 3) std::cout << "\tY: " << Y << "\n";
+		std::cout << "\n";
+	}
 	switch(instr.opcode)
 	{
 		case NOP: break;

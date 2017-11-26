@@ -12,7 +12,7 @@
 class CPU
 {
 	public:
-	CPU();
+	CPU(bool log = true);
 
 	void start();
 
@@ -30,7 +30,7 @@ class CPU
 
 	bool running;
 
-	utility::Clock<float, std::ratio<1, 20>> clock;
+	utility::Clock<float, std::ratio<1, 2000>> clock;
 
 	Hardware *M;
 	Hardware *HW[0x100];
@@ -45,4 +45,5 @@ class CPU
 
 	Word mutable dummy;
 	unsigned cycle;
+	bool log;
 };
