@@ -30,7 +30,7 @@ class CPU
 
 	bool running;
 
-	utility::Clock<float, std::ratio<1, 2000>> clock;
+	utility::Clock<float, std::ratio<1, 200>> clock;
 
 	Hardware *M;
 	Hardware *HW[0x100];
