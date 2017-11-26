@@ -17,13 +17,10 @@ class HostConsole : public Hardware
 		CLR = 0x02,
 	};
 
-	HostConsole();
-
 	protected:
 	virtual Word &handleSdp(Word value) override;
 	virtual void handleAdpI(Word value) override;
 
 	Word buffer[BUFFER_SIZE];
-	std::size_t bufferIterator;
 };
 
