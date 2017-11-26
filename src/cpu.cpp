@@ -85,7 +85,7 @@ void CPU::execute()
 	switch(instr.opcode)
 	{
 		case NOP: break;
-		case JMP: PC = X; break; //actually this could be CPY instead
+		case JMP: PC = X; return;
 		case CLL:
 			S[++SP] = PC;
 			PC = X;
@@ -103,12 +103,12 @@ void CPU::execute()
 			}
 			break;
 		//
-		case IEQ: if(X == Y) ++PC; break;
-		case INQ: if(X != Y) ++PC; break;
-		case IGT: if(X >  Y) ++PC; break;
-		case ILT: if(X <  Y) ++PC; break;
-		case IGQ: if(X >= Y) ++PC; break;
-		case ILQ: if(X <= Y) ++PC; break;
+		case IEQ: if(X == Y) skipInstruction(); break;
+		case INQ: if(X != Y) skipInstruction(); break;
+		case IGT: if(X >  Y) skipInstruction(); break;
+		case ILT: if(X <  Y) skipInstruction(); break;
+		case IGQ: if(X >= Y) skipInstruction(); break;
+		case ILQ: if(X <= Y) skipInstruction(); break;
 		//
 		case NOT: Y = !X; break;
 		case OR : Y |= X; break;
@@ -144,7 +144,14 @@ void CPU::execute()
 		case SDP: (*HW[R[0xF]])[X] = Y; break;
 		default: throw std::runtime_error("illegal instruction");
 	}
-	if(instr.opcode != JMP) PC += instructionSize;
+	skipInstruction();
+}
+
+void CPU::skipInstruction()
+{
+	Instruction instr((*M)[PC]);
+	unsigned instructionSize = instr.getSize();
+	PC += instructionSize;
 }
 
 Word &CPU::fetchValue(Mode mode, Word address)

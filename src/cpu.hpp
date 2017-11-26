@@ -22,6 +22,7 @@ class CPU
 
 	void disconnectHardware(Byte channel);
 	private:
+	void skipInstruction();
 	void copyRom();
 	void loop();
 	void execute();
