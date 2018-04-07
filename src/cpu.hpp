@@ -16,7 +16,7 @@ class CPU
     public:
     typedef AdpDevice Hardware;
 
-    CPU(Word romSize, bool log = true);
+    CPU(Word romSize);
 
     void start();
 
@@ -37,6 +37,8 @@ class CPU
     Word static const SP1REG = 0xE;
     Word static const SP2REG = 0xF;
 
+    void debugScreen();
+
     void skipInstruction();
     void loop();
     void execute(Instruction instr);
@@ -51,7 +53,7 @@ class CPU
 
     bool running;
 
-    utility::Clock<float, std::ratio<1, 10>> clock;
+    utility::Clock clock;
 
     Hardware *HW[HW_COUNT];
     DummyDevice dummyDevice;
@@ -63,7 +65,8 @@ class CPU
     Bit C;
 
     unsigned cycle;
-    bool log;
+    double clockFrequency;
     Word romSize;
     bool jumped;
+    bool debugChangedR[R_COUNT];
 };

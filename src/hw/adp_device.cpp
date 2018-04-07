@@ -12,10 +12,10 @@ void AdpDevice::adpI16(Word value)
 
 Byte AdpDevice::adpO8()
 {
-    return static_cast<Byte>(output);
+    return byte_out;
 }
 
 Word AdpDevice::adpO16()
 {
-    return output;
+    return word_out;
 }

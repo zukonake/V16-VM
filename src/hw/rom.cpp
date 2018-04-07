@@ -1,10 +1,9 @@
-#include <iostream>
 #include <stdexcept>
 #include <string>
 //
 #include "rom.hpp"
 
-Rom::Rom(Word *data, Word size)
+Rom::Rom(Word *data, std::size_t size)
 {
     if(size > MAX_SIZE)
     {
@@ -15,21 +14,10 @@ Rom::Rom(Word *data, Word size)
 
 void Rom::handleAdpI8(Byte value)
 {
-    checkAddress(value);
-    output = memory[value];
+    byte_out = memory.at(value);
 }
 
 void Rom::handleAdpI16(Word value)
 {
-    checkAddress(value);
-    output = memory[value];
+    word_out = memory.at(value);
 }
-
-void Rom::checkAddress(Word address)
-{
-    if(address >= MAX_SIZE)
-    {
-        throw std::out_of_range("rom address out of range: " + std::to_string(address));
-    }
-}
-

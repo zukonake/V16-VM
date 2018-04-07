@@ -17,5 +17,6 @@ class AdpDevice
     virtual void handleAdpI8(Byte value) = 0;
     virtual void handleAdpI16(Word value) = 0;
 
-    Word output;
+    Word word_out;
+    Word byte_out;
 };

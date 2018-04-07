@@ -2,10 +2,10 @@
 
 void DummyDevice::handleAdpI8(Byte value)
 {
-    output = value;
+    byte_out = value;
 }
 
 void DummyDevice::handleAdpI16(Word value)
 {
-    output = value;
+    word_out = value;
 }

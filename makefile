@@ -27,10 +27,9 @@ WARNING_FLAGS := \
 	-Wnon-virtual-dtor \
 	-Wctor-dtor-privacy \
 	-Wno-long-long \
-	-Weffc++ \
-	-Wconversion
+	-Weffc++
 
-LDLIBS := -lpthread -L lib
+LDLIBS := -lpthread -L lib -lncurses -lsfml-system -lsfml-graphics -lsfml-window
 DEBUG_FLAGS := -ferror-limit=5 -g -O0 -ftrapv
 FLAGS := $(INCLUDE_FLAGS) $(WARNING_FLAGS) -MMD -MP -std=c++14 -pedantic $(DEBUG_FLAGS)
 
