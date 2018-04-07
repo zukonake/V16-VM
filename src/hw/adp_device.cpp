@@ -1,0 +1,21 @@
+#include "adp_device.hpp"
+
+void AdpDevice::adpI8(Byte value)
+{
+    handleAdpI8(value);
+}
+
+void AdpDevice::adpI16(Word value)
+{
+    handleAdpI16(value);
+}
+
+Byte AdpDevice::adpO8()
+{
+    return static_cast<Byte>(output);
+}
+
+Word AdpDevice::adpO16()
+{
+    return output;
+}
