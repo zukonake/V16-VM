@@ -27,9 +27,12 @@ class CPU
     Word static const ROM_CHANNEL = 0xFF;
     Word static const MEM_CHANNEL = 0x00;
     Word static const HW_COUNT    = 0x100;
-    Word static const ROM_SIZE    = 0x100;
-    Word static const S_COUNT     = 0x100;
     Word static const R_COUNT     = 0x10;
+
+    // Memory Map
+    Word static const STACK_START = 0x0000;
+    Word static const ROM_START   = 0x0100;
+    Word static const FREE_START  = 0x0200;
 
     Word static const ITR = 0x0;
     Word static const ARR = 0x1;
@@ -60,7 +63,6 @@ class CPU
     DummyDevice dummyDevice;
 
     Word R[R_COUNT];
-    Word S[S_COUNT];
     Word PC;
     Byte SP;
     Bit C;

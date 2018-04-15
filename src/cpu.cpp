@@ -7,16 +7,15 @@
 #include <hw/vrwm.hpp>
 
 CPU::CPU(Word romSize) :
-    PC(0x0000),
+    PC(ROM_START),
     SP(0x00),
     C(0x0),
     cycle(1),
-    clockFrequency(100.0),
+    clockFrequency(256.0),
     romSize(romSize),
     jumped(false)
 {
     clock.setCycle(utility::Clock::Duration(1.0 / clockFrequency));
-    for(Word i = 0x0; i < S_COUNT;  i++) S[i] = 0x0000;
     for(Word i = 0x0; i < R_COUNT;  i++) R[i] = 0x0000;
     for(Word i = 0x0; i < HW_COUNT; i++) connectHardware(i, dummyDevice);
     for(Word i = 0x0; i < R_COUNT;  i++) debugChangedR[i] = 0x0000;
@@ -32,8 +31,22 @@ void CPU::debugScreen()
     while(run)
     {
         clear();
+        if(running)
+        {
+            printw("RUNNING");
+        }
+        else
+        {
+            printw("TERMINATED (press 'q' to exit)");
+        }
+        printw("\n");
         printw("F: %f\n", clockFrequency);
-        printw("SP: %02x\n", SP);
+        printw("S(%02x): ", SP);
+        for(Word it = 0; it < SP; ++it)
+        {
+            printw("%04x ", reinterpret_cast<Vrwm *>(HW[MEM_CHANNEL])->debugRead(STACK_START + it));
+        }
+        printw("\n");
         printw("R: ");
         for(Word it = 0; it < R_COUNT; ++it)
         {
@@ -42,7 +55,7 @@ void CPU::debugScreen()
                 attron(COLOR_PAIR(2));
                 debugChangedR[it] = false;
             }
-            printw("%04x", R[it]);
+            printw("%x: %04x", it, R[it]);
             attroff(COLOR_PAIR(2));
             printw(" ");
         }
@@ -61,6 +74,8 @@ void CPU::debugScreen()
         {
             case 's': ++pos; break;
             case 'w': --pos; break;
+            case 'S': pos += 0x10; break;
+            case 'W': pos -= 0x10; break;
             case 'q': run = false; running = false; break;
             case 'a':
                 clockFrequency = std::max(1.0, clockFrequency - (1.0 + clockFrequency * 0.2));
@@ -133,10 +148,10 @@ void CPU::execute(Instruction instr)
         case Opcode::NOP:                                                     break;
         case Opcode::JUMP: PC = rA(); jumped = true;                          break;
         case Opcode::TERM: running = false;                                   break;
-        case Opcode::CALL: S[SP++] = PC; PC = rA(); jumped = true;            break;
-        case Opcode::RET:  PC = S[--SP];                                      break;
-        case Opcode::PUSH: S[SP++] = rA();                                    break;
-        case Opcode::POP:  wA(S[--SP]);                                       break;
+        case Opcode::CALL: memWrite(SP++, PC); PC = rA(); jumped = true;      break;
+        case Opcode::RET:  PC = memRead(--SP);                                break;
+        case Opcode::PUSH: memWrite(SP++, rA());                              break;
+        case Opcode::POP:  wA(memRead(--SP));                                 break;
 
         case Opcode::MOVE: wB(rA()); wA(std::rand() % 0x10000);               break;
         case Opcode::COPY: wB(rA());                                          break;
@@ -236,13 +251,14 @@ Instruction CPU::fetch()
 
 void CPU::copyRom()
 {
-    INLINE(COPY, D, L, 0x0000, D, R, SBR);
-    while(R[SBR] < romSize)
+    INLINE(COPY, D, L, 0x0000   , D, R, ITR);
+    INLINE(COPY, D, L, ROM_START, D, R, SBR);
+    while(R[ITR] < romSize)
     {
         clear();
-        printw("COPYING ROM: 0x%02x/0x%02x\n", R[SBR], romSize - 1);
+        printw("COPYING ROM: 0x%02x/0x%02x\n", R[ITR], romSize - 1);
         refresh();
-        INLINE(ADWI, D, R, SBR        , D, L, ROM_CHANNEL);
+        INLINE(ADWI, D, A, ITR        , D, L, ROM_CHANNEL);
         INLINE(ADWO, D, L, ROM_CHANNEL, I, A, SBR        );
     }
 }
