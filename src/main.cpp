@@ -38,14 +38,14 @@ int main(int argc, char *argv[])
 
     Vrwm memory(0x10000);
     Rom rom(words, romSize);
-    Bmd display(4 * 0x10, 0x10, 16);
+    //Bmd display(4 * 0x10, 0x10, 16);
 
     delete[] bytes;
     delete[] words;
 
     CPU cpu(romSize);
     cpu.connectHardware(0x00, memory);
-    cpu.connectHardware(0x01, display);
+    //cpu.connectHardware(0x01, display);
     cpu.connectHardware(0xFF, rom);
     cpu.start();
 

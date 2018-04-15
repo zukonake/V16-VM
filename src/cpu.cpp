@@ -33,6 +33,7 @@ void CPU::debugScreen()
     {
         clear();
         printw("F: %f\n", clockFrequency);
+        printw("SP: %02x\n", SP);
         printw("R: ");
         for(Word it = 0; it < R_COUNT; ++it)
         {
@@ -129,41 +130,43 @@ void CPU::execute(Instruction instr)
     Word temp;
     switch(instr.opcode.type)
     {
-        case Opcode::NOP:                                                    break;
-        case Opcode::JMP: PC = rA(); jumped = true;                          break;
-        case Opcode::TRM: running = false;                                   break;
-        case Opcode::CLL: S[++SP] = PC; PC = rA();                           break;
-        case Opcode::RET: PC = S[SP--];                                      break;
+        case Opcode::NOP:                                                     break;
+        case Opcode::JUMP: PC = rA(); jumped = true;                          break;
+        case Opcode::TERM: running = false;                                   break;
+        case Opcode::CALL: S[SP++] = PC; PC = rA(); jumped = true;            break;
+        case Opcode::RET:  PC = S[--SP];                                      break;
+        case Opcode::PUSH: S[SP++] = rA();                                    break;
+        case Opcode::POP:  wA(S[--SP]);                                       break;
 
-        case Opcode::MOV: wB(rA()); wA(std::rand() % 0x10000);               break;
-        case Opcode::CPY: wB(rA());                                          break;
-        case Opcode::SWP: temp = rA(); wA(rB()); wB(temp);                   break;
+        case Opcode::MOVE: wB(rA()); wA(std::rand() % 0x10000);               break;
+        case Opcode::COPY: wB(rA());                                          break;
+        case Opcode::SWAP: temp = rA(); wA(rB()); wB(temp);                   break;
 
-        case Opcode::IEQ: if(rA() == rB()) skipInstruction();                break;
-        case Opcode::INQ: if(rA() != rB()) skipInstruction();                break;
-        case Opcode::IGT: if(rA() >  rB()) skipInstruction();                break;
-        case Opcode::ILT: if(rA() <  rB()) skipInstruction();                break;
-        case Opcode::IGQ: if(rA() >= rB()) skipInstruction();                break;
-        case Opcode::ILQ: if(rA() <= rB()) skipInstruction();                break;
+        case Opcode::IFEQ: if(rA() == rB()) skipInstruction();                break;
+        case Opcode::IFNQ: if(rA() != rB()) skipInstruction();                break;
+        case Opcode::IFGT: if(rA() >  rB()) skipInstruction();                break;
+        case Opcode::IFLT: if(rA() <  rB()) skipInstruction();                break;
+        case Opcode::IFGQ: if(rA() >= rB()) skipInstruction();                break;
+        case Opcode::IFLQ: if(rA() <= rB()) skipInstruction();                break;
 
-        case Opcode::NEG: wB(~rA());                                         break;
-        case Opcode::OR:  wB(rB() | rA());                                   break;
-        case Opcode::AND: wB(rB() & rA());                                   break;
-        case Opcode::XOR: wB(rB() ^ rA());                                   break;
-        case Opcode::RSH: wB(rB() >> rA());                                  break;
-        case Opcode::LSH: wB(rB() << rA());                                  break;
-        case Opcode::SPB: wA(((rA() & 0xFF00) >> 8) | ((rA() & 0xFF) << 8)); break;
+        case Opcode::NEG:  wB(~rA());                                         break;
+        case Opcode::OR:   wB(rB() | rA());                                   break;
+        case Opcode::AND:  wB(rB() & rA());                                   break;
+        case Opcode::XOR:  wB(rB() ^ rA());                                   break;
+        case Opcode::RSHF: wB(rB() >> rA());                                  break;
+        case Opcode::LSHF: wB(rB() << rA());                                  break;
+        case Opcode::SWPB: wA(((rA() & 0xFF00) >> 8) | ((rA() & 0xFF) << 8)); break;
 
-        case Opcode::ADD: C = rA() > 0x10000 - rB(); wB(rB() + rA());        break;
-        case Opcode::SUB: C = rA() > rB(); wB(rB() - rA());                  break;
-        case Opcode::MUL: C = rA() > 0x10000 / rB(); wB(rB() * rA());        break;
-        case Opcode::DIV: wB(rB() / rA());                                   break;
-        case Opcode::MOD: wB(rB() % rA());                                   break;
+        case Opcode::ADD:  C = rA() > 0x10000 - rB(); wB(rB() + rA());        break;
+        case Opcode::SUB:  C = rA() > rB(); wB(rB() - rA());                  break;
+        case Opcode::MUL:  C = rA() > 0x10000 / rB(); wB(rB() * rA());        break;
+        case Opcode::DIV:  wB(rB() / rA());                                   break;
+        case Opcode::MOD:  wB(rB() % rA());                                   break;
 
-        case Opcode::AIB: HW[rB()]->adpI8(rA());                             break;
-        case Opcode::AOB: wB(HW[rA()]->adpO8());                             break;
-        case Opcode::AIW: HW[rB()]->adpI16(rA());                            break;
-        case Opcode::AOW: wB(HW[rA()]->adpO16());                            break;
+        case Opcode::ADBI: HW[rB()]->adpI8(rA());                             break;
+        case Opcode::ADBO: wB(HW[rA()]->adpO8());                             break;
+        case Opcode::ADWI: HW[rB()]->adpI16(rA());                            break;
+        case Opcode::ADWO: wB(HW[rA()]->adpO16());                            break;
         default: throw std::runtime_error("illegal instruction");
     }
 }
@@ -173,7 +176,7 @@ Word CPU::readMode(Mode mode, Word address)
     Word result;
     switch(mode.type)
     {
-        case Mode::M: result = address;      break;
+        case Mode::L: result = address;      break;
         case Mode::R: result = R[address];   break;
         case Mode::A: result = R[address]++; debugChangedR[address] = true; break;
         case Mode::B: result = ++R[address]; debugChangedR[address] = true; break;
@@ -181,7 +184,7 @@ Word CPU::readMode(Mode mode, Word address)
         case Mode::N: result = PC - address; break;
         case Mode::C: result = C;            break;
     }
-    if(mode.dir == Mode::I) result = memRead(address);
+    if(mode.dir == Mode::I) result = memRead(result);
     return result;
 }
 
@@ -190,11 +193,11 @@ void CPU::writeMode(Mode mode, Word address, Word value)
     if(mode.dir == Mode::I)
     {
         address   = readMode({Mode::D, mode.type}, address);
-        mode.type = Mode::M;
+        mode.type = Mode::L;
     }
     switch(mode.type)
     {
-        case Mode::M: memWrite(address, value); break;
+        case Mode::L: memWrite(address, value); break;
         case Mode::R: R[address] =   value; debugChangedR[address] = true; break;
         case Mode::A: R[address] = ++value; debugChangedR[address] = true; break;
         case Mode::B: R[address] =   value; debugChangedR[address] = true; break;
@@ -233,28 +236,28 @@ Instruction CPU::fetch()
 
 void CPU::copyRom()
 {
-    INLINE(CPY, D, M, 0x0000, D, R, SP2REG);
-    while(R[SP2REG] < romSize)
+    INLINE(COPY, D, L, 0x0000, D, R, SBR);
+    while(R[SBR] < romSize)
     {
         clear();
-        printw("COPYING ROM: 0x%02x/0x%02x\n", R[SP2REG], romSize - 1);
+        printw("COPYING ROM: 0x%02x/0x%02x\n", R[SBR], romSize - 1);
         refresh();
-        INLINE(AIW, D, R, SP2REG     , D, M, ROM_CHANNEL);
-        INLINE(AOW, D, M, ROM_CHANNEL, I, A, SP2REG     );
+        INLINE(ADWI, D, R, SBR        , D, L, ROM_CHANNEL);
+        INLINE(ADWO, D, L, ROM_CHANNEL, I, A, SBR        );
     }
 }
 
 Word CPU::memRead(Word address)
 {
-    INLINE(AIW, D, M, Vrwm::READ  , D, M, MEM_CHANNEL);
-    INLINE(AIW, D, M, address     , D, M, MEM_CHANNEL);
-    INLINE(AOW, D, M, MEM_CHANNEL , D, R, SP1REG     );
-    return R[SP1REG];
+    INLINE(ADWI, D, L, Vrwm::READ  , D, L, MEM_CHANNEL);
+    INLINE(ADWI, D, L, address     , D, L, MEM_CHANNEL);
+    INLINE(ADWO, D, L, MEM_CHANNEL , D, R, SAR        );
+    return R[SAR];
 }
 
 void CPU::memWrite(Word address, Word value)
 {
-    INLINE(AIW, D, M, Vrwm::WRITE, D, M, MEM_CHANNEL);
-    INLINE(AIW, D, M, address    , D, M, MEM_CHANNEL);
-    INLINE(AIW, D, M, value      , D, M, MEM_CHANNEL);
+    INLINE(ADWI, D, L, Vrwm::WRITE, D, L, MEM_CHANNEL);
+    INLINE(ADWI, D, L, address    , D, L, MEM_CHANNEL);
+    INLINE(ADWI, D, L, value      , D, L, MEM_CHANNEL);
 }

@@ -27,7 +27,7 @@ unsigned Mode::getCycleCost() const
     }
     switch(type)
     {
-        case M:            break;
+        case L:            break;
         case R:            break;
         case A: cost += 2; break;
         case B: cost += 2; break;
@@ -43,7 +43,7 @@ bool Mode::takesWord() const
 {
     switch(type)
     {
-        case M: return true;
+        case L: return true;
         case R: return true;
         case A: return true;
         case B: return true;
@@ -70,36 +70,38 @@ unsigned Opcode::getCycleCost() const
 {
     switch(type)
     {
-        case NOP: return 1;
-        case JMP: return 1;
-        case TRM: return 1;
-        case CLL: return 2;
-        case RET: return 1;
-        case MOV: return 1;
-        case CPY: return 2;
-        case SWP: return 2;
-        case IEQ: return 1;
-        case INQ: return 1;
-        case IGT: return 2;
-        case ILT: return 2;
-        case IGQ: return 2;
-        case ILQ: return 2;
-        case NEG: return 1;
-        case OR:  return 1;
-        case AND: return 1;
-        case XOR: return 1;
-        case RSH: return 1;
-        case LSH: return 1;
-        case SPB: return 2;
-        case ADD: return 2;
-        case SUB: return 2;
-        case MUL: return 3;
-        case DIV: return 3;
-        case MOD: return 4;
-        case AIB: return 1;
-        case AOB: return 1;
-        case AIW: return 2;
-        case AOW: return 2;
+        case NOP:  return 1;
+        case JUMP: return 1;
+        case TERM: return 1;
+        case CALL: return 2;
+        case RET:  return 1;
+        case PUSH: return 1;
+        case POP:  return 1;
+        case MOVE: return 1;
+        case COPY: return 2;
+        case SWAP: return 2;
+        case IFEQ: return 1;
+        case IFNQ: return 1;
+        case IFGT: return 2;
+        case IFLT: return 2;
+        case IFGQ: return 2;
+        case IFLQ: return 2;
+        case NEG:  return 1;
+        case OR:   return 1;
+        case AND:  return 1;
+        case XOR:  return 1;
+        case RSHF: return 1;
+        case LSHF: return 1;
+        case SWPB: return 2;
+        case ADD:  return 2;
+        case SUB:  return 2;
+        case MUL:  return 3;
+        case DIV:  return 3;
+        case MOD:  return 4;
+        case ADBI: return 1;
+        case ADBO: return 1;
+        case ADWI: return 2;
+        case ADWO: return 2;
         default:  throw std::runtime_error("illegal opcode: " + std::to_string(type));
     }
 }
@@ -108,36 +110,38 @@ unsigned Opcode::getModeSize() const
 {
     switch(type)
     {
-        case NOP: return 0;
-        case JMP: return 1;
-        case TRM: return 1;
-        case CLL: return 1;
-        case RET: return 0;
-        case MOV: return 2;
-        case CPY: return 2;
-        case SWP: return 2;
-        case IEQ: return 2;
-        case INQ: return 2;
-        case IGT: return 2;
-        case ILT: return 2;
-        case IGQ: return 2;
-        case ILQ: return 2;
-        case NEG: return 2;
-        case OR:  return 2;
-        case AND: return 2;
-        case XOR: return 2;
-        case RSH: return 2;
-        case LSH: return 2;
-        case SPB: return 1;
-        case ADD: return 2;
-        case SUB: return 2;
-        case MUL: return 2;
-        case DIV: return 2;
-        case MOD: return 2;
-        case AIB: return 2;
-        case AOB: return 2;
-        case AIW: return 2;
-        case AOW: return 2;
+        case NOP:  return 0;
+        case JUMP: return 1;
+        case TERM: return 1;
+        case CALL: return 1;
+        case RET:  return 0;
+        case PUSH: return 1;
+        case POP:  return 1;
+        case MOVE: return 2;
+        case COPY: return 2;
+        case SWAP: return 2;
+        case IFEQ: return 2;
+        case IFNQ: return 2;
+        case IFGT: return 2;
+        case IFLT: return 2;
+        case IFGQ: return 2;
+        case IFLQ: return 2;
+        case NEG:  return 2;
+        case OR:   return 2;
+        case AND:  return 2;
+        case XOR:  return 2;
+        case RSHF: return 2;
+        case LSHF: return 2;
+        case SWPB: return 1;
+        case ADD:  return 2;
+        case SUB:  return 2;
+        case MUL:  return 2;
+        case DIV:  return 2;
+        case MOD:  return 2;
+        case ADBI: return 2;
+        case ADBO: return 2;
+        case ADWI: return 2;
+        case ADWO: return 2;
         default:  throw std::runtime_error("illegal opcode: " + std::to_string(type));
     }
 }
@@ -167,6 +171,7 @@ unsigned Instruction::getCycleCost() const
 
 unsigned Instruction::getWordSize() const
 {
-    return 1 + static_cast<unsigned>(a.takesWord()) + static_cast<unsigned>(b.takesWord());
+    return 1 + static_cast<unsigned>(a.takesWord() && opcode.getModeSize() >= 1) +
+               static_cast<unsigned>(b.takesWord() && opcode.getModeSize() >= 2);
 }
 

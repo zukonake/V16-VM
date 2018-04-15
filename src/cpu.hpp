@@ -31,11 +31,12 @@ class CPU
     Word static const S_COUNT     = 0x100;
     Word static const R_COUNT     = 0x10;
 
-    Word static const ITEREG = 0x0;
-    Word static const ARHREG = 0x1;
-    Word static const OPEREG = 0xD;
-    Word static const SP1REG = 0xE;
-    Word static const SP2REG = 0xF;
+    Word static const ITR = 0x0;
+    Word static const ARR = 0x1;
+    Word static const SPR = 0xC;
+    Word static const OPR = 0xD;
+    Word static const SAR = 0xE;
+    Word static const SBR = 0xF;
 
     void debugScreen();
 
