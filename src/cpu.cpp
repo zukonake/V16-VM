@@ -145,43 +145,53 @@ void CPU::execute(Instruction instr)
     Word temp;
     switch(instr.opcode.type)
     {
-        case Opcode::NOP:                                                     break;
-        case Opcode::JUMP: PC = rA(); jumped = true;                          break;
-        case Opcode::TERM: running = false;                                   break;
-        case Opcode::CALL: memWrite(SP++, PC); PC = rA(); jumped = true;      break;
-        case Opcode::RET:  PC = memRead(--SP);                                break;
-        case Opcode::PUSH: memWrite(SP++, rA());                              break;
-        case Opcode::POP:  wA(memRead(--SP));                                 break;
+        case Opcode::NOP:                                      break;
+        case Opcode::JUMP: PC = rA();
+                           jumped = true;                      break;
+        case Opcode::TERM: running = false;                    break;
+        case Opcode::CALL: memWrite(SP++ + STACK_START, PC);
+                           PC = rA();
+                           jumped = true;                      break;
+        case Opcode::RET:  PC = memRead(--SP + STACK_START);   break;
+        case Opcode::PUSH: memWrite(SP++ + STACK_START, rA()); break;
+        case Opcode::POP:  wA(memRead(--SP + STACK_START));    break;
 
-        case Opcode::MOVE: wB(rA()); wA(std::rand() % 0x10000);               break;
-        case Opcode::COPY: wB(rA());                                          break;
-        case Opcode::SWAP: temp = rA(); wA(rB()); wB(temp);                   break;
+        case Opcode::MOVE: wB(rA());
+                           wA(std::rand() % 0x10000);          break;
+        case Opcode::COPY: wB(rA());                           break;
+        case Opcode::SWAP: temp = rA();
+                           wA(rB());
+                           wB(temp);                           break;
 
-        case Opcode::IFEQ: if(rA() == rB()) skipInstruction();                break;
-        case Opcode::IFNQ: if(rA() != rB()) skipInstruction();                break;
-        case Opcode::IFGT: if(rA() >  rB()) skipInstruction();                break;
-        case Opcode::IFLT: if(rA() <  rB()) skipInstruction();                break;
-        case Opcode::IFGQ: if(rA() >= rB()) skipInstruction();                break;
-        case Opcode::IFLQ: if(rA() <= rB()) skipInstruction();                break;
+        case Opcode::IFEQ: if(rA() == rB()) skipInstruction(); break;
+        case Opcode::IFNQ: if(rA() != rB()) skipInstruction(); break;
+        case Opcode::IFGT: if(rA() >  rB()) skipInstruction(); break;
+        case Opcode::IFLT: if(rA() <  rB()) skipInstruction(); break;
+        case Opcode::IFGQ: if(rA() >= rB()) skipInstruction(); break;
+        case Opcode::IFLQ: if(rA() <= rB()) skipInstruction(); break;
 
-        case Opcode::NEG:  wB(~rA());                                         break;
-        case Opcode::OR:   wB(rB() | rA());                                   break;
-        case Opcode::AND:  wB(rB() & rA());                                   break;
-        case Opcode::XOR:  wB(rB() ^ rA());                                   break;
-        case Opcode::RSHF: wB(rB() >> rA());                                  break;
-        case Opcode::LSHF: wB(rB() << rA());                                  break;
-        case Opcode::SWPB: wA(((rA() & 0xFF00) >> 8) | ((rA() & 0xFF) << 8)); break;
+        case Opcode::NEG:  wB(~rA());                          break;
+        case Opcode::OR:   wB(rB() | rA());                    break;
+        case Opcode::AND:  wB(rB() & rA());                    break;
+        case Opcode::XOR:  wB(rB() ^ rA());                    break;
+        case Opcode::RSHF: wB(rB() >> rA());                   break;
+        case Opcode::LSHF: wB(rB() << rA());                   break;
+        case Opcode::SWPB: wA(((rA() & 0xFF00) >> 8) |
+                              ((rA() & 0xFF) << 8));           break;
 
-        case Opcode::ADD:  C = rA() > 0x10000 - rB(); wB(rB() + rA());        break;
-        case Opcode::SUB:  C = rA() > rB(); wB(rB() - rA());                  break;
-        case Opcode::MUL:  C = rA() > 0x10000 / rB(); wB(rB() * rA());        break;
-        case Opcode::DIV:  wB(rB() / rA());                                   break;
-        case Opcode::MOD:  wB(rB() % rA());                                   break;
+        case Opcode::ADD:  C = rA() > 0x10000 - rB();
+                           wB(rB() + rA());                    break;
+        case Opcode::SUB:  C = rA() > rB();
+                           wB(rB() - rA());                    break;
+        case Opcode::MUL:  C = rA() > 0x10000 / rB();
+                           wB(rB() * rA());                    break;
+        case Opcode::DIV:  wB(rB() / rA());                    break;
+        case Opcode::MOD:  wB(rB() % rA());                    break;
 
-        case Opcode::ADBI: HW[rB()]->adpI8(rA());                             break;
-        case Opcode::ADBO: wB(HW[rA()]->adpO8());                             break;
-        case Opcode::ADWI: HW[rB()]->adpI16(rA());                            break;
-        case Opcode::ADWO: wB(HW[rA()]->adpO16());                            break;
+        case Opcode::ADBI: HW[rB()]->adpI8(rA());              break;
+        case Opcode::ADBO: wB(HW[rA()]->adpO8());              break;
+        case Opcode::ADWI: HW[rB()]->adpI16(rA());             break;
+        case Opcode::ADWO: wB(HW[rA()]->adpO16());             break;
         default: throw std::runtime_error("illegal instruction");
     }
 }
@@ -251,14 +261,15 @@ Instruction CPU::fetch()
 
 void CPU::copyRom()
 {
-    INLINE(COPY, D, L, 0x0000   , D, R, ITR);
+    Word const reg = 0x0;
+    INLINE(COPY, D, L, 0x0000   , D, R, reg);
     INLINE(COPY, D, L, ROM_START, D, R, SBR);
-    while(R[ITR] < romSize)
+    while(R[reg] < romSize)
     {
         clear();
-        printw("COPYING ROM: 0x%02x/0x%02x\n", R[ITR], romSize - 1);
+        printw("COPYING ROM: 0x%02x/0x%02x\n", R[reg], romSize - 1);
         refresh();
-        INLINE(ADWI, D, A, ITR        , D, L, ROM_CHANNEL);
+        INLINE(ADWI, D, A, reg        , D, L, ROM_CHANNEL);
         INLINE(ADWO, D, L, ROM_CHANNEL, I, A, SBR        );
     }
 }

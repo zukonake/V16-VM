@@ -34,10 +34,7 @@ class CPU
     Word static const ROM_START   = 0x0100;
     Word static const FREE_START  = 0x0200;
 
-    Word static const ITR = 0x0;
-    Word static const ARR = 0x1;
-    Word static const SPR = 0xC;
-    Word static const OPR = 0xD;
+    Word static const SPR = 0xD;
     Word static const SAR = 0xE;
     Word static const SBR = 0xF;
 
