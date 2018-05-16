@@ -1,4 +1,4 @@
-TARGET ?= v16-vm
+TARGET ?= vvx
 
 BUILD_DIR := build
 SRC_DIR := src
@@ -29,7 +29,7 @@ WARNING_FLAGS := \
 	-Wno-long-long \
 	-Weffc++
 
-LDLIBS := -lpthread -L lib -lncurses -lsfml-system -lsfml-graphics -lsfml-window
+LDLIBS := -pthread -L lib -lncurses -lsfml-system -lsfml-graphics -lsfml-window -l:vortex.a
 DEBUG_FLAGS := -ferror-limit=5 -g -O0 -ftrapv
 FLAGS := $(INCLUDE_FLAGS) $(WARNING_FLAGS) -MMD -MP -std=c++14 -pedantic $(DEBUG_FLAGS)
 

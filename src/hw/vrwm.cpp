@@ -1,8 +1,9 @@
+#include <stdexcept>
+#include <string>
+//
 #include "vrwm.hpp"
 
-Vrwm::Vrwm(std::size_t size) :
-    state(AWAITING_COMMAND),
-    address(0x0000)
+Vrwm::Vrwm(std::size_t size)
 {
     memory.reserve(size);
     for(std::size_t i = 0; i < size; ++i)
@@ -11,49 +12,35 @@ Vrwm::Vrwm(std::size_t size) :
     }
 }
 
-Word Vrwm::debugRead(Word address)
+u16 Vrwm::debug_read(u16 addr)
 {
-    return memory.at(address);
+    return memory.at(addr);
 }
 
-void Vrwm::handleAdpI8(Byte value)
+void Vrwm::single_iteration()
 {
-    handleAdp(value, true);
-}
-
-void Vrwm::handleAdpI16(Word value)
-{
-    handleAdp(value, false);
-}
-
-void Vrwm::handleAdp(Word value, bool byte)
-{
-    switch(state)
+    Command command = static_cast<Command>(receive());
+    switch(command)
     {
-        case AWAITING_COMMAND:
-            switch(static_cast<Command>(value))
-            {
-                case READ:  state = AWAITING_READ_ADDRESS;  break;
-                case WRITE: state = AWAITING_WRITE_ADDRESS; break;
-            } break;
+        case INFO:
+        {
+            send(memory.size());
+        }; break;
 
-        case AWAITING_READ_ADDRESS:
-            state = AWAITING_COMMAND;
-            address = value;
-            if(byte) byte_out = memory.at(address);
-            else     word_out = memory.at(address);
-            state = AWAITING_COMMAND;
-            break;
+        case READ:
+        {
+            u16 addr = receive();
+            send(memory.at(addr));
+        }; break;
 
-        case AWAITING_WRITE_ADDRESS:
-            state = AWAITING_VALUE;
-            address = value;
-            break;
+        case WRITE:
+        {
+            u16 addr = receive();
+            u16 val  = receive();
+            memory.at(addr) = val;
+        }; break;
 
-        case AWAITING_VALUE:
-            memory.at(address) = value;
-            state = AWAITING_COMMAND;
-            break;
+        default: throw std::runtime_error("illegal vrwm command " + std::to_string(command));
     }
 }
 

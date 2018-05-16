@@ -4,42 +4,42 @@ namespace utility
 {
 
 Clock::Clock() :
-    currentCycle(0),
+    current_cycle(0),
     cycle(0),
-    mBefore(mClock.now())
+    before(clock.now())
 {
 
 }
 
 void Clock::reset()
 {
-    currentCycle = Duration(0);
+    current_cycle = Duration(0);
 }
 
 void Clock::start()
 {
-    mBefore = mClock.now();
+    before = clock.now();
 }
 
 void Clock::stop()
 {
-    currentCycle += Duration(mClock.now() - mBefore);
+    current_cycle += Duration(clock.now() - before);
 }
 
-void Clock::setCycle(Clock::Duration value)
+void Clock::set_cycle(Clock::Duration value)
 {
     cycle = value;
 }
 
 typename Clock::Duration Clock::synchronize()
 {
-    Duration delta = cycle - currentCycle;
-    if(currentCycle < cycle)
+    Duration delta = cycle - current_cycle;
+    if(current_cycle < cycle)
     {
-        std::this_thread::sleep_for( delta );
+        std::this_thread::sleep_for(delta);
         reset();
     }
-    currentCycle = Duration::zero();
+    current_cycle = Duration::zero();
     return delta;
 }
 

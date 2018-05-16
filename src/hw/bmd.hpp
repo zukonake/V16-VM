@@ -4,9 +4,10 @@
 //
 #include <SFML/Graphics.hpp>
 //
-#include <hw/adp_device.hpp>
+#include <int.hpp>
+#include <hw.hpp>
 
-class Bmd : public AdpDevice
+class Bmd : public Hw
 {
     public:
     enum Command
@@ -22,47 +23,22 @@ class Bmd : public AdpDevice
         INFO      = 0x08
     };
 
-    enum State
-    {
-        COMMAND,
-        BLIT_0,
-        PART_BLIT_0,
-        PART_BLIT_1,
-        PART_BLIT_2,
-        OR_0,
-        OR_1,
-        SET_0,
-        SET_1,
-        TEXT_0,
-        TEXT_1,
-        TEXT_BLIT_0,
-        TEXT_BLIT_1,
-        TEXT_BLIT_2,
-        INFO_0,
-        INFO_1,
-    };
+    Bmd(std::size_t v_pixel_width, std::size_t v_pixel_height, float pixel_size);
 
-    Bmd(std::size_t vPixelWidth, std::size_t vPixelHeight, float pixelSize);
-
-    protected:
-    virtual void handleAdpI8(Byte value) override;
-    virtual void handleAdpI16(Word value) override;
     private:
-    std::size_t getWordSize() const;
+    virtual void single_iteration() override;
+
+    std::size_t word_size() const;
     void clear();
     void display();
 
-    unsigned inAddr;
-    unsigned inSize;
-    uint8_t  inCode;
-    std::vector<Word> buffer;
-    float pixelSize;
-    std::size_t wordWidth;
-    std::size_t wordHeight;
-    State state;
+    std::vector<u16> buffer;
+    float pixel_size;
+    std::size_t word_width;
+    std::size_t word_height;
     sf::RenderWindow window;
 
-    Word const font[2 * 26] =
+    u16 const font[2 * 26] =
     {
         0x5200, 0x0557, //A 0x00
         0x5300, 0x0353, //B 0x01

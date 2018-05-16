@@ -4,36 +4,26 @@
 #include <string>
 #include <vector>
 //
-#include <hw/adp_device.hpp>
+#include <int.hpp>
+#include <hw.hpp>
 
 
-class Vrwm : public AdpDevice
+class Vrwm : public Hw
 {
-    enum State
-    {
-        AWAITING_COMMAND,
-        AWAITING_READ_ADDRESS,
-        AWAITING_WRITE_ADDRESS,
-        AWAITING_VALUE
-    };
     public:
     enum Command
     {
-        READ  = 0x0000,
-        WRITE = 0x0001
+        INFO  = 0x0000,
+        READ  = 0x0001,
+        WRITE = 0x0002
     };
 
     Vrwm(std::size_t size);
 
-    Word debugRead(Word address);
-    protected:
-    virtual void handleAdpI8(Byte value) override;
-    virtual void handleAdpI16(Word value) override;
+    u16 debug_read(u16 address);
+
     private:
-    void handleAdp(Word value, bool byte);
+    virtual void single_iteration() override;
 
-    State       state;
-    Word        address;
-
-    std::vector<Word> memory;
+    std::vector<u16> memory;
 };

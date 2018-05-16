@@ -3,21 +3,33 @@
 //
 #include "rom.hpp"
 
-Rom::Rom(Word *data, std::size_t size)
+Rom::Rom(u16 *data, std::size_t size) :
+    memory(data, data + size)
 {
-    if(size > MAX_SIZE)
+
+}
+
+void Rom::single_iteration()
+{
+    Command command = static_cast<Command>(receive());
+    switch(command)
     {
-        throw std::runtime_error("rom size too high: " + std::to_string(size));
+        case INFO:
+        {
+            send(memory.size());
+        }; break;
+
+        case AT:
+        {
+            u16 addr = receive();
+            send(memory.at(addr));
+        }; break;
+
+        case BLIT:
+        {
+            for(u16 i = 0; i < memory.size(); ++i) send(memory.at(i));
+        }; break;
+
+        default: throw std::runtime_error("illegal rom command " + std::to_string(command));
     }
-    for(Word i = 0; i < size; ++i) memory[i] = data[i];
-}
-
-void Rom::handleAdpI8(Byte value)
-{
-    byte_out = memory.at(value);
-}
-
-void Rom::handleAdpI16(Word value)
-{
-    word_out = memory.at(value);
 }

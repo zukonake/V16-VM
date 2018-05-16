@@ -1,19 +1,25 @@
 #pragma once
 
 #include <cstddef>
-#include <array>
+#include <vector>
 //
-#include <hw/adp_device.hpp>
+#include <int.hpp>
+#include <hw.hpp>
 
-class Rom : public AdpDevice
+class Rom : public Hw
 {
     public:
-    Word static const MAX_SIZE = 0x100;
+    enum Command
+    {
+        INFO = 0x0000,
+        AT   = 0x0001,
+        BLIT = 0x0002
+    };
 
-    Rom(Word *data, std::size_t size);
+    Rom(u16 *data, std::size_t size);
 
-    virtual void handleAdpI8(Byte value) override;
-    virtual void handleAdpI16(Word value) override;
     private:
-    std::array<Word, MAX_SIZE> memory;
+    virtual void single_iteration() override;
+
+    std::vector<u16> memory;
 };

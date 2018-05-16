@@ -19,14 +19,14 @@ class Clock
     void reset();
     void start();
     void stop();
-    void setCycle(Duration value);
+    void set_cycle(Duration value);
     Duration get();
     Duration synchronize();
     private:
-    steady_clock mClock;
-    Duration currentCycle;
+    steady_clock clock;
+    Duration current_cycle;
     Duration cycle;
-    TimePoint mBefore;
+    TimePoint before;
 };
 
 }
